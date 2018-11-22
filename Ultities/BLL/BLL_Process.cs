@@ -26,7 +26,8 @@ namespace Ultities.BLL
         private static int numberOfColumns;
         private static int numberOfRows;
 
-        public static ErrorObject errObject;
+        static ErrorObject errObject;
+        static ErrorDefine errDefine = C_NO_ERROR;
 
         public void LoadData(string path)
         {
@@ -39,9 +40,6 @@ namespace Ultities.BLL
 
             // Load data for list can matrix
             InitData();
-
-            // Close connect
-            cn.CloseConnection();
         }
         void SetNumberColumnsAndRows()
         {
@@ -68,6 +66,7 @@ namespace Ultities.BLL
             throw new NotImplementedException();
         }
 
+       
         internal ErrorDefine CheckMessageInfo(Messages msg)
         {
             #region check message info
@@ -78,11 +77,14 @@ namespace Ultities.BLL
             }
 
             //
+            bool isValidSendType = msg.MessageSendType.ToString().ToLower() != "cycle" ? true : false;
+            isValidSendType &= msg.MessageSendType.ToString().ToLower() != "event" ? true : false;
+
             if (msg.MessageSendType.ToString() == null)
             {
                 return C_ERROR_MSG_SENDTYPE_NULL;
             }
-            else if (msg.MessageSendType.ToString().ToLower() != "cycle" || msg.MessageSendType.ToString().ToLower() != "event")
+            else if (isValidSendType)
             {
                 return C_ERROR_MSG_SENDTYPE_INVALID;
             }
@@ -108,6 +110,7 @@ namespace Ultities.BLL
             #endregion
         }
 
+        
         bool InitData()
         {
             canMatrix = new List<Messages>();
@@ -115,8 +118,8 @@ namespace Ultities.BLL
             #region Init data for list can matrix
 
             bool result = false;
-            try
-            {
+            //try
+            //{
                 int rCnt, cCnt;
 
                 for (rCnt = START_OF_FIRST_ROW; rCnt <= numberOfRows; ++rCnt)
@@ -145,13 +148,13 @@ namespace Ultities.BLL
 
                         #region check message info
 
-                        ErrorDefine errDefine = CheckMessageInfo(message);
+                       errDefine = CheckMessageInfo(message);
                         if (errDefine != C_NO_ERROR)
                         {
                             // TODO - write log4net here
                             
                             errObject = new ErrorObject(errDefine, message.MessageName);
-                            MessageBox.Show(errObject.ErrorMessageOutput);
+                            MessageBox.Show("Message:" +message.MessageName + " - " + errObject.ErrorMessageOutput);
                             return false;
                         }
 
@@ -181,7 +184,8 @@ namespace Ultities.BLL
                         while (id <= numberOfRows)
                         {
                             strMessageName = Convert.ToString(range.Cells[id, COLUMN_MESSAGENAME].Value2);
-                            if (strMessageName == null) //Check whether message is exist to add signal
+                            string messageID = Convert.ToString(range.Cells[id, COLUMN_MESSAGEID].Value2);
+                        if (strMessageName == null && messageID ==null) //Check whether message is exist to add signal
                             {
                                 #region Add info for signal
 
@@ -243,21 +247,24 @@ namespace Ultities.BLL
                     }
                     else
                     {
-                        // Write error log here if the first row dont have info about message name
+                        // TODO - write log4net here
+
+                        errObject = new ErrorObject(C_ERROR_MSG_NAME_NULL, "");
+                        MessageBox.Show(errObject.ErrorMessageOutput + "[Row,Column] : [" + rCnt + "," + COLUMN_MESSAGENAME + "]");
+                        return false;
                     }
                 }
                 result = true;
-            }
-            catch (Exception ex)
-            {
-                // Write log4net here
-                string str = ex.Message;
-                result = false;
-            }
-            finally
-            {
-                cn.CloseConnection();
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Write log4net here
+            //    string str = ex.Message;
+            //    result = false;
+            //}
+            //finally
+            //{
+            //}
 
             return result;
 

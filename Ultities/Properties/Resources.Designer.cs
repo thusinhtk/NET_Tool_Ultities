@@ -29,7 +29,7 @@ namespace Ultities.Properties
 
         private static global::System.Globalization.CultureInfo resourceCulture;
 
-        [global::System.Diagnostics.CodeAnalysis.SuppressMessagesAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        //[global::System.Diagnostics.CodeAnalysis.SuppressMessagesAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources()
         {
         }

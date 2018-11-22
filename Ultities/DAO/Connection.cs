@@ -8,20 +8,35 @@ using System.Runtime.InteropServices;
 using static Ultities.BLL.Constants;
 using System.Data;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace Ultities.DAO
 {
-    class Connection : IDisposable
+    class Connection
     {
         public static Excel.Application xlApp;
         public static Excel.Workbook xlWorkBook;
         public static Excel.Worksheet xlWorkSheet;
         public static Excel.Range range;
+        private static string _path;
+
+        public static string Path
+        {
+            get
+            {
+                return _path;
+            }
+
+            set
+            {
+                _path = value;
+            }
+        }
 
         public bool Connect(string path)
         {
             bool result = false;
-
+            Path = path;
             try
             {
                 xlApp = new Excel.Application();
@@ -40,11 +55,6 @@ namespace Ultities.DAO
             return result;
         }
 
-        public void CloseConnection()
-        {
-            Dispose(true);
-        }
-
         public bool IsOpenConnection()
         {
             return xlApp != null ? true : false;
@@ -52,26 +62,12 @@ namespace Ultities.DAO
 
         ~Connection()
         {
-            this.Dispose(false);
-        }
+            xlWorkBook.Close(false, null, null);
+            xlApp.Quit();
 
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                xlWorkBook.Close(true, null, null);
-                xlApp.Quit();
-
-                Marshal.ReleaseComObject(xlWorkSheet);
-                Marshal.ReleaseComObject(xlWorkBook);
-                Marshal.ReleaseComObject(xlApp);
-            }          
+            Marshal.ReleaseComObject(xlWorkSheet);
+            Marshal.ReleaseComObject(xlWorkBook);
+            Marshal.ReleaseComObject(xlApp);
         }
     }
 }

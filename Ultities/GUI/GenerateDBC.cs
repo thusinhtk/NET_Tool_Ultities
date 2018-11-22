@@ -89,7 +89,7 @@ namespace Ultities
 
             // Set cursor as default arrow
             Cursor.Current = Cursors.Default;
-            toolStripStatusLabel1.Text = "";
+            toolStripStatusLabel1.Text = "Load data successful";
 
             //watch.Stop();
             //var elapsedMs = watch.ElapsedMilliseconds;
