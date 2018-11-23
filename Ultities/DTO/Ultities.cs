@@ -38,10 +38,12 @@ namespace Ultities.DTO
             //SIGNAL
             C_ERROR_SGN_NAME_NULL,
             C_ERROR_SGN_NAME_LENGTH_INVALID,
+
+            C_ERROR_SGN_BYTEORDER_NULL,
             C_ERROR_SGN_BYTEORDER_INVALID,
 
             C_ERROR_SGN_STARTBIT_INVALID,
-            C_ERROR_SGN_STARTBIT_NULL,
+            //C_ERROR_SGN_STARTBIT_NULL,
 
             C_ERROR_SGN_BITLENGTH_INVALID,
             C_ERROR_SGN_BITLENGTH_NULL,
