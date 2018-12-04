@@ -29,21 +29,22 @@ namespace Ultities.DTO
             C_ERROR_MSG_SENDTYPE_INVALID,
 
             C_ERROR_MSG_CYCLETIME_NULL,
+            C_ERROR_MSG_CYCLETIME_L_THAN0,
 
             C_ERROR_MSG_DLC_NULL,
-            C_ERROR_MSG_DLC_INVALID,
+            C_ERROR_MSG_DLC_L_THAN0,
+            C_ERROR_MSG_DLC_G_THAN8,
 
             C_ERROR_MSG_NOTSEND_RECEIVE,
 
             //SIGNAL
             C_ERROR_SGN_NAME_NULL,
-            C_ERROR_SGN_NAME_LENGTH_INVALID,
+            C_ERROR_SGN_NAME_LENGTH_G_THAN32,
 
-            C_ERROR_SGN_BYTEORDER_NULL,
-            C_ERROR_SGN_BYTEORDER_INVALID,
-
-            C_ERROR_SGN_STARTBIT_INVALID,
-            //C_ERROR_SGN_STARTBIT_NULL,
+            C_ERROR_SGN_BYTEORDER_ONLY_LSB_MSB,
+          
+            C_ERROR_SGN_STARTBIT_NULL,
+            C_ERROR_SGN_STARTBIT_G_THAN63,
 
             C_ERROR_SGN_BITLENGTH_INVALID,
             C_ERROR_SGN_BITLENGTH_NULL,
@@ -84,7 +85,6 @@ namespace Ultities.DTO
         public struct ErrorObject
         {
             ErrorDefine errorType;
-            string messageNameError;
             string errorMessageOutput;
 
             public ErrorDefine ErrorType
@@ -97,19 +97,6 @@ namespace Ultities.DTO
                 set
                 {
                     errorType = value;
-                }
-            }
-
-            public string MessageNameError
-            {
-                get
-                {
-                    return messageNameError;
-                }
-
-                set
-                {
-                    messageNameError = value;
                 }
             }
 
@@ -126,11 +113,14 @@ namespace Ultities.DTO
                 }
             }
 
-            public ErrorObject(ErrorDefine errorType, string messageNameError)
+            public ErrorObject(ErrorDefine errorType)
             {
                 this.errorType = errorType;
-                this.messageNameError = messageNameError;
                 this.errorMessageOutput = ErrorNotification.NotificationString(errorType);
+            }
+            public string GetNotification(ErrorDefine errorType)
+            {
+                return ErrorNotification.NotificationString(errorType);
             }
         }
     }

@@ -11,8 +11,8 @@ namespace Ultities.DTO
         private string messageName;
         private string messageID;
         private string messageSendType;
-        private UInt32 messageCycleTime;
-        private UInt16 messageLength;
+        private string messageCycleTime;
+        private string messageLength;
         private List<Signal> listSignal;
         private List<Node> listNode;
 
@@ -55,7 +55,7 @@ namespace Ultities.DTO
             }
         }
 
-        public uint MessageCycleTime
+        public string MessageCycleTime
         {
             get
             {
@@ -68,7 +68,7 @@ namespace Ultities.DTO
             }
         }
 
-        public ushort MessageLength
+        public string MessageLength
         {
             get
             {
@@ -81,7 +81,7 @@ namespace Ultities.DTO
             }
         }
 
-        public List<Signal> ListSignal
+        internal List<Signal> ListSignal
         {
             get
             {
@@ -94,7 +94,7 @@ namespace Ultities.DTO
             }
         }
 
-        public List<Node> ListNode
+        internal List<Node> ListNode
         {
             get
             {

@@ -13,6 +13,7 @@ using static Ultities.DTO.Ultities;
 using static Ultities.DTO.Ultities.SendReceiveType;
 using static Ultities.DTO.Ultities.ErrorDefine;
 using static Ultities.DTO.Ultities.ErrorObject;
+using static Ultities.GenerateDBC;
 
 
 
@@ -20,26 +21,28 @@ namespace Ultities.BLL
 {
     class BLL_Process
     {
-        public static List<Messages> canMatrix;
-        private static Connection cn;
+        private static Connection cn = new Connection();
+
+        public static List<Messages> canMatrix =new List<Messages>();
+        private static Messages message =new Messages();
 
         private static int numberOfColumns;
         private static int numberOfRows;
 
-        static ErrorObject errObject;
-        static ErrorDefine errDefine = C_NO_ERROR;
+        private static ErrorObject errObject = new ErrorObject();
+        private static ErrorDefine errDefine = C_NO_ERROR;
 
         public void LoadData(string path)
         {
             // Open connnect
-            cn = new Connection();
             cn.Connect(@path);
 
             // Set number of column and rows
             SetNumberColumnsAndRows();
 
             // Load data for list can matrix
-            InitData();
+            TransferExcelToList();
+
         }
         void SetNumberColumnsAndRows()
         {
@@ -61,8 +64,170 @@ namespace Ultities.BLL
             #endregion
         }
 
-        bool InitData()
+        internal bool ValidateData()
         {
+            foreach(Messages msg in canMatrix)
+            {
+                //check frame info
+                if (!IsFrameRow(msg.MessageName,msg.MessageID,msg.MessageSendType,msg.MessageCycleTime,msg.MessageLength))
+                {
+                    errDefine = CheckMessageInfo(message);
+                    SetTextForGui(errDefine, message.MessageName);
+
+                    //check node of frame
+                    errDefine = CheckListNodeInfo(message.ListNode);
+                    SetTextForGui(errDefine, message.MessageName);
+                }
+                //Check signal
+            }
+            return false;
+        }
+        bool SetTextForGui(ErrorDefine eDefine, string messageName)
+        {
+            if (eDefine != C_NO_ERROR)
+            {
+                // TODO - write log4net here
+                GenerateDBC.SetTextInfo("Message:" + messageName + errObject.GetNotification(errDefine));
+                return false;
+            }
+            return true;
+        }
+
+        bool IsFrameRow(string frameName, string frameID, string frameSendTye, string frameCycle, string frameLength)
+        {
+            bool isAllNull;
+
+            isAllNull = frameName == null ? true : false;
+            isAllNull &= frameSendTye == null ? true : false;
+            isAllNull &= frameCycle == null ? true : false;
+            isAllNull &= frameLength == null ? true : false;
+
+            return !isAllNull;
+        }
+
+        bool TransferExcelToList()
+        {
+            bool result = false;       
+
+            int rCnt, cCnt;
+            bool isFirstFrame;
+
+            List<Signal> listSignal = new List<Signal>();
+
+            for (rCnt = START_OF_FIRST_ROW; rCnt <= numberOfRows; ++rCnt)
+            {
+                isFirstFrame = rCnt == START_OF_FIRST_ROW ? true:false;
+
+                // Add info for frame
+                string msgName = Convert.ToString(range.Cells[rCnt, COLUMN_MESSAGENAME].Value2); ;
+                string msgID = Convert.ToString(range.Cells[rCnt, COLUMN_MESSAGEID].Value2);
+                string msgSendType = Convert.ToString(range.Cells[rCnt, COLUMN_MESSAGESENDTYPE].Value2);
+                string msgCycleTime = Convert.ToString(range.Cells[rCnt, COLUMN_MESSAGECYCLE].Value2);
+                string msgLength = Convert.ToString(range.Cells[rCnt, COLUMN_MESSAGEDLC].Value2);
+
+                if (IsFrameRow(msgName, msgID, msgSendType, msgCycleTime, msgLength))
+                {
+                    //Add list signal to frame for each next frame
+                    if (!isFirstFrame) //For first frame
+                    {
+                        message.ListSignal = listSignal;
+                        canMatrix.Add(message);
+
+                        message = null; // Dispose object message
+                        listSignal = new List<Signal>();
+                    }
+
+
+                    // Frame info
+                    message = new Messages();
+                    message.MessageName = msgName;
+                    message.MessageID = msgID;
+                    message.MessageSendType = msgSendType;
+                    message.MessageCycleTime = msgCycleTime;
+                    message.MessageLength = msgLength;
+
+                    //Node of frame info
+                    List<Node> listNode = new List<Node>();
+                    for (cCnt = 22; cCnt <= numberOfColumns; ++cCnt)
+                    {
+                        Node node = new Node();
+                        node.NodeName = Convert.ToString(range.Cells[1, cCnt].Value2);
+
+                        string str = Convert.ToString(range.Cells[rCnt, cCnt].Value2);
+                        SendReceiveType nodeSendType = str == "s" ? C_SEND : str == "r" ? C_RECEIVE : C_INVALID;
+                        node.SendType = nodeSendType;
+
+                        listNode.Add(node);
+                    }
+                    // Add list node of frame
+                    message.ListNode = listNode;
+                }
+                else // Signal row
+                {      
+                    string signalName = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALNAME].Value2);
+                    string signalDescription = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALDESCRIPTION].Value2);
+                    string signalByteOrder = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALBYTEFORMAT].Value2);
+                    string signalStartBit = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALSTARTBIT].Value2);
+                    string signalBitLength = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALBITLENGTH].Value2);
+                    string signalDataType = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALDATATYPE].Value2);
+                    string signalFactor = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALRESOLUTION].Value2);
+                    string signalOffset = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALOFFSET].Value2);
+                    string signalPhyMin = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALMINPHY].Value2);
+                    string signalPhyMax = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALMAXPHY].Value2);
+                    string signalHexMin = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALMINHEX].Value2);
+                    string signalHexMax = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALMAXHEX].Value2);
+                    string signalInitHex = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALINITVALUE].Value2);
+                    string signalInvalidHex = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALINVALIDVALUE].Value2);
+                    string signalUnit = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALUNIT].Value2);
+                    string signalValueDescription = Convert.ToString(range.Cells[rCnt, COLUMN_SIGNALVALUEDESCRIPTION].Value2);
+
+                    Signal signal = new Signal();
+                    signal.SignalName = signalName;
+                    signal.SignalDescription = signalDescription;
+                    signal.SignalByteOrder = signalByteOrder;
+                    signal.SignalStartBit = signalStartBit;
+                    signal.SignalBitLength = signalBitLength;
+                    signal.SignalDataType = signalDataType;
+                    signal.SignalFactor = signalFactor;
+                    signal.SignalOffset = signalOffset;
+                    signal.SignalPhyMin = signalPhyMin;
+                    signal.SignalPhyMax = signalPhyMax;
+                    signal.SignalHexMin = signalHexMin;
+                    signal.SignalHexMax = signalHexMax;
+                    signal.SignalInitHex = signalInitHex;
+                    signal.SignalInvalidHex = signalInvalidHex;
+                    signal.SignalUnit = signalUnit;
+                    signal.SignalValueDescription = signalValueDescription;
+
+                    List<Node> listNodeSignal = new List<Node>();
+                    for (cCnt = 22; cCnt <= numberOfColumns; ++cCnt)
+                    {
+                        Node node = new Node();
+                        node.NodeName = Convert.ToString(range.Cells[1, cCnt].Value2);
+
+                        string str = Convert.ToString(range.Cells[rCnt, cCnt].Value2);
+                        SendReceiveType nodeSendType = str == "s" ? C_SEND : str == "r" ? C_RECEIVE : C_INVALID;
+                        node.SendType = nodeSendType;
+
+                        listNodeSignal.Add(node);
+                    }
+                    signal.ListNode = listNodeSignal;
+                    listSignal.Add(signal);
+                }
+
+                if(rCnt == numberOfRows) //For last frame
+                {
+                    message.ListSignal = listSignal;
+                    canMatrix.Add(message);
+                }
+            }
+            return result;
+        }
+            
+        
+        bool LoadingData()
+        {
+            /*
             canMatrix = new List<Messages>();
 
             #region Init data for list can matrix
@@ -290,10 +455,13 @@ namespace Ultities.BLL
 
             #endregion
             #endregion
+            */
+            return false;
         }
 
         private ErrorDefine CheckSignalnfo(Signal signal)
         {
+            /*
             #region Check signal name
             if (signal.SignalName == null)
             {
@@ -302,7 +470,7 @@ namespace Ultities.BLL
             if (signal.SignalName.Length > 32)
             {
                 return C_ERROR_SGN_NAME_LENGTH_INVALID;
-            } 
+            }
             #endregion
 
             #region Check signal byte order
@@ -317,14 +485,14 @@ namespace Ultities.BLL
             if (!isSignalByteOrderInvalid)
             {
                 return C_ERROR_SGN_BITLENGTH_INVALID;
-            } 
+            }
             #endregion
 
             #region Check signal start bit
             if (signal.SignalStartBit > 63)
             {
                 return C_ERROR_SGN_STARTBIT_INVALID;
-            } 
+            }
             #endregion
 
             #region Check signal bit length
@@ -335,7 +503,7 @@ namespace Ultities.BLL
             if (signal.SignalBitLength > 64)
             {
                 return C_ERROR_SGN_BITLENGTH_INVALID;
-            } 
+            }
             #endregion
 
 
@@ -354,7 +522,7 @@ namespace Ultities.BLL
             }
             #endregion
 
-            #region Check signal factor 
+            #region Check signal resolution
 
             #endregion
 
@@ -385,7 +553,7 @@ namespace Ultities.BLL
             #region Check signal invalid hex 
 
             #endregion
-
+            */
             return C_NO_ERROR;
         }
 
@@ -405,13 +573,13 @@ namespace Ultities.BLL
         internal ErrorDefine CheckMessageInfo(Messages msg)
         {
             #region check message info
-            //
-            if (msg.MessageID.ToString() == null)
+            // msg id
+            if (msg.MessageID == null)
             {
                 return C_ERROR_MSG_ID_NULL;
             }
 
-            //
+            //msg send type
             bool isValidSendType = msg.MessageSendType.ToLower() != "cycle" ? true : false;
             isValidSendType &= msg.MessageSendType.ToLower() != "event" ? true : false;
 
@@ -424,25 +592,113 @@ namespace Ultities.BLL
                 return C_ERROR_MSG_SENDTYPE_INVALID;
             }
 
-            //
-            if (msg.MessageCycleTime.ToString() == null)
+            //msg cycle time
+            int tempNumber = 0;
+            bool canConvert = int.TryParse(msg.MessageCycleTime, out tempNumber); // Null will return false
+            if (canConvert)
+            {
+                if (tempNumber <= 0)
+                {
+                    return C_ERROR_MSG_CYCLETIME_L_THAN0;
+                }
+            }
+            else
             {
                 return C_ERROR_MSG_CYCLETIME_NULL;
             }
 
-            //
-            if (msg.MessageLength.ToString() == null)
+            // msg length
+            tempNumber = 0;
+            canConvert = int.TryParse(msg.MessageCycleTime, out tempNumber); // Null will return false
+            if (canConvert)
             {
-                return C_ERROR_MSG_DLC_NULL;
+                if (tempNumber <= 0)
+                {
+                    return C_ERROR_MSG_DLC_L_THAN0;
+                }
+                if (tempNumber >8)
+                {
+                    return C_ERROR_MSG_DLC_G_THAN8;
+                }
             }
-            else if (msg.MessageLength > 8)
+            else
             {
-                return C_ERROR_MSG_DLC_INVALID;
+                return C_ERROR_MSG_CYCLETIME_NULL;
             }
-
-            return C_NO_ERROR;
 
             #endregion
+
+            return C_NO_ERROR;           
+        }
+
+        internal ErrorDefine CheckSignalInfo(Signal signal)
+        {
+            // signal name
+            if (signal.SignalName == null)
+            {
+                return C_ERROR_SGN_NAME_NULL;
+            }
+            if(signal.SignalName.Length >32)
+            {
+                return C_ERROR_SGN_NAME_LENGTH_G_THAN32;
+            }
+
+            // byte order
+            bool isValidByteOrder = signal.SignalByteOrder.ToLower() == "motorola lsb" ? true : false;
+            isValidByteOrder &= signal.SignalByteOrder.ToLower() == "motorola msb" ? true : false;
+
+            if (!isValidByteOrder)
+            {
+                return C_ERROR_SGN_BYTEORDER_ONLY_LSB_MSB;
+            }
+
+            // start bit
+            //msg cycle time
+            uint tempNumber = 0;
+            bool canConvert = uint.TryParse(signal.SignalStartBit, out tempNumber); // Null will return false
+            if (canConvert)
+            {
+                if (tempNumber > 63)
+                {
+                    return C_ERROR_SGN_STARTBIT_G_THAN63;
+                }
+            }
+            else
+            {
+                return C_ERROR_MSG_CYCLETIME_NULL;
+            }
+
+            // bit length
+
+            // data type
+
+            // factor
+
+            // offset
+
+            // phy min
+
+            // phy max
+
+            // hex min
+
+
+            // hex max
+
+            // init hex - check is hexa number if not null
+
+            // invalid hex - check is hexa number if not null
+
+            return C_NO_ERROR;
+        }
+        bool CheckNumber(string numberString, out T outNumber)
+        {
+            return int.TryParse(numberString, out outNumber);
+        }
+
+        bool CheckNullValue(string value)
+        {
+            return value == null ? true : false;
         }
     }
 }

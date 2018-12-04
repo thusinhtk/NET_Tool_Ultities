@@ -11,17 +11,17 @@ namespace Ultities.DTO
         private string signalName;
         private string signalDescription;
         private string signalByteOrder;
-        private UInt16 signalStartBit;
-        private UInt16 signalBitLength;
+        private string signalStartBit;
+        private string signalBitLength;
         private string signalDataType;
-        private double signalFactor;
-        private double signalOffset;
-        private double signalPhyMin;
-        private double signalPhyMax;
-        private UInt32 signalHexMin;
-        private UInt64 signalHexMax;
-        private UInt32 signalInitHex;
-        private UInt64 signalInvalidHex;
+        private string signalFactor;
+        private string signalOffset;
+        private string signalPhyMin;
+        private string signalPhyMax;
+        private string signalHexMin;
+        private string signalHexMax;
+        private string signalInitHex;
+        private string signalInvalidHex;
         private string signalUnit;
         private string signalValueDescription;
         private List<Node> listNode;
@@ -38,54 +38,7 @@ namespace Ultities.DTO
                 signalName = value;
             }
         }
-        public double SignalOffset
-        {
-            get
-            {
-                return signalOffset;
-            }
 
-            set
-            {
-                signalOffset = value;
-            }
-        }
-        public double SignalPhyMin
-        {
-            get
-            {
-                return signalPhyMin;
-            }
-
-            set
-            {
-                signalPhyMin = value;
-            }
-        }
-        public double SignalPhyMax
-        {
-            get
-            {
-                return signalPhyMax;
-            }
-
-            set
-            {
-                signalPhyMax = value;
-            }
-        }
-        public string SignalUnit
-        {
-            get
-            {
-                return signalUnit;
-            }
-
-            set
-            {
-                signalUnit = value;
-            }
-        }
         public string SignalDescription
         {
             get
@@ -99,18 +52,6 @@ namespace Ultities.DTO
             }
         }
 
-        internal List<Node> ListNode
-        {
-            get
-            {
-                return listNode;
-            }
-
-            set
-            {
-                listNode = value;
-            }
-        }
         public string SignalByteOrder
         {
             get
@@ -123,7 +64,8 @@ namespace Ultities.DTO
                 signalByteOrder = value;
             }
         }
-        public ushort SignalStartBit
+
+        public string SignalStartBit
         {
             get
             {
@@ -135,7 +77,8 @@ namespace Ultities.DTO
                 signalStartBit = value;
             }
         }
-        public ushort SignalBitLength
+
+        public string SignalBitLength
         {
             get
             {
@@ -145,30 +88,6 @@ namespace Ultities.DTO
             set
             {
                 signalBitLength = value;
-            }
-        }
-        public double SignalFactor
-        {
-            get
-            {
-                return signalFactor;
-            }
-
-            set
-            {
-                signalFactor = value;
-            }
-        }
-        public string SignalValueDescription
-        {
-            get
-            {
-                return signalValueDescription;
-            }
-
-            set
-            {
-                signalValueDescription = value;
             }
         }
 
@@ -185,7 +104,59 @@ namespace Ultities.DTO
             }
         }
 
-        public uint SignalHexMin
+        public string SignalFactor
+        {
+            get
+            {
+                return signalFactor;
+            }
+
+            set
+            {
+                signalFactor = value;
+            }
+        }
+
+        public string SignalOffset
+        {
+            get
+            {
+                return signalOffset;
+            }
+
+            set
+            {
+                signalOffset = value;
+            }
+        }
+
+        public string SignalPhyMin
+        {
+            get
+            {
+                return signalPhyMin;
+            }
+
+            set
+            {
+                signalPhyMin = value;
+            }
+        }
+
+        public string SignalPhyMax
+        {
+            get
+            {
+                return signalPhyMax;
+            }
+
+            set
+            {
+                signalPhyMax = value;
+            }
+        }
+
+        public string SignalHexMin
         {
             get
             {
@@ -198,7 +169,7 @@ namespace Ultities.DTO
             }
         }
 
-        public ulong SignalHexMax
+        public string SignalHexMax
         {
             get
             {
@@ -211,7 +182,20 @@ namespace Ultities.DTO
             }
         }
 
-        public ulong SignalInvalidHex
+        public string SignalInitHex
+        {
+            get
+            {
+                return signalInitHex;
+            }
+
+            set
+            {
+                signalInitHex = value;
+            }
+        }
+
+        public string SignalInvalidHex
         {
             get
             {
@@ -224,16 +208,42 @@ namespace Ultities.DTO
             }
         }
 
-        public uint SignalInitHex
+        public string SignalUnit
         {
             get
             {
-                return signalInitHex;
+                return signalUnit;
             }
 
             set
             {
-                signalInitHex = value;
+                signalUnit = value;
+            }
+        }
+
+        public string SignalValueDescription
+        {
+            get
+            {
+                return signalValueDescription;
+            }
+
+            set
+            {
+                signalValueDescription = value;
+            }
+        }
+
+        internal List<Node> ListNode
+        {
+            get
+            {
+                return listNode;
+            }
+
+            set
+            {
+                listNode = value;
             }
         }
     }

@@ -36,7 +36,7 @@ namespace Ultities.DAO
         public bool Connect(string path)
         {
             bool result = false;
-            Path = path;
+            _path = path;
             try
             {
                 xlApp = new Excel.Application();
@@ -62,12 +62,15 @@ namespace Ultities.DAO
 
         ~Connection()
         {
-            xlWorkBook.Close(false, null, null);
-            xlApp.Quit();
+            if (IsOpenConnection())
+            {
+                xlWorkBook.Close(false, null, null);
+                xlApp.Quit();
 
-            Marshal.ReleaseComObject(xlWorkSheet);
-            Marshal.ReleaseComObject(xlWorkBook);
-            Marshal.ReleaseComObject(xlApp);
+                Marshal.ReleaseComObject(xlWorkSheet);
+                Marshal.ReleaseComObject(xlWorkBook);
+                Marshal.ReleaseComObject(xlApp);
+            }
         }
     }
 }

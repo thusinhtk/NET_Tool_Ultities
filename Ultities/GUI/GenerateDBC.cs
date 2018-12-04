@@ -9,17 +9,22 @@ namespace Ultities
 {
     public partial class GenerateDBC : Form
     {
-        public static Excel.Application xlApp;
-        public static Excel.Workbook xlWorkBook;
-        public static Excel.Worksheet xlWorkSheet;
-        public static Excel.Range range;
+        private static GenerateDBC generateDBCForm = null;
 
         static string ExcelFilePath;
 
         static BLL_Process prcs = new BLL_Process();
+
+        public static void SetTextInfo(string str)
+        {
+            if (generateDBCForm != null)
+                generateDBCForm.richTextBox1.AppendText(str + '\n');
+        }
+
         public GenerateDBC()
         {
             InitializeComponent();
+            generateDBCForm = this;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -39,8 +44,6 @@ namespace Ultities
         }
         public bool CheckCanMatrix()
         {
-            bool result = false;
-
             ////Check message info
             //prcs.CheckMessageInfo();
             //prcs.CheckNodeOfMessage();
@@ -58,6 +61,12 @@ namespace Ultities
             CheckCanMatrix();
 
         }
+
+        bool ValidateData()
+        {
+            return prcs.ValidateData(); ;
+        }
+
         public void CloseExcelFile(string path)
         {
 
@@ -79,7 +88,7 @@ namespace Ultities
 
         private void btnLoadData_Click(object sender, EventArgs e)
         {
-            //var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
 
             // Set cursor as hourglass
             Cursor.Current = Cursors.WaitCursor;
@@ -91,8 +100,8 @@ namespace Ultities
             Cursor.Current = Cursors.Default;
             toolStripStatusLabel1.Text = "Load data successful";
 
-            //watch.Stop();
-            //var elapsedMs = watch.ElapsedMilliseconds;
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
         }
     }
 }
