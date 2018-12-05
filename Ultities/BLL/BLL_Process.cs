@@ -114,6 +114,23 @@ namespace Ultities.BLL
 
             List<Signal> listSignal = new List<Signal>();
 
+            // TODO - Test
+            object[,] values = (object[,])range.Value2;
+
+            int NumRow = 1;
+
+            string[] Fields = new string[numberOfColumns];
+
+            while (NumRow < values.GetLength(0))
+            {
+                for (int c = 1; c <= numberOfColumns; c++)
+                {
+                    Fields[c - 1] = Convert.ToString(values[NumRow, c]);
+                }
+                NumRow++;
+            }
+
+
             for (rCnt = START_OF_FIRST_ROW; rCnt <= numberOfRows; ++rCnt)
             {
                 isFirstFrame = rCnt == START_OF_FIRST_ROW ? true:false;
@@ -219,6 +236,8 @@ namespace Ultities.BLL
                 {
                     message.ListSignal = listSignal;
                     canMatrix.Add(message);
+
+                    result = true;
                 }
             }
             return result;
@@ -691,7 +710,7 @@ namespace Ultities.BLL
 
             return C_NO_ERROR;
         }
-        bool CheckNumber(string numberString, out T outNumber)
+        bool CheckNumber(string numberString, int outNumber)
         {
             return int.TryParse(numberString, out outNumber);
         }
