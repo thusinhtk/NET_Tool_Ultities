@@ -21,6 +21,8 @@ namespace Ultities.BLL
 {
     class BLL_Process
     {
+        public static bool isLoadingDataBefore = false;
+
         private static Connection cn = new Connection();
 
         public static List<Messages> canMatrix =new List<Messages>();
@@ -43,6 +45,7 @@ namespace Ultities.BLL
             // Load data for list can matrix
             TransferExcelToList();
 
+            isLoadingDataBefore = true;
         }
         void SetNumberColumnsAndRows()
         {
@@ -66,28 +69,39 @@ namespace Ultities.BLL
 
         internal bool ValidateData()
         {
-            foreach(Messages msg in canMatrix)
+            // Clear text append before checking
+            GenerateDBC.ClearTextInfo();
+
+            foreach (Messages msg in canMatrix)
             {
                 //check frame info
-                if (!IsFrameRow(msg.MessageName,msg.MessageID,msg.MessageSendType,msg.MessageCycleTime,msg.MessageLength))
-                {
-                    errDefine = CheckMessageInfo(message);
-                    SetTextForGui(errDefine, message.MessageName);
+                errDefine = CheckMessageInfo(msg);
+                SetTextForGui(errDefine, msg.MessageName);
 
-                    //check node of frame
-                    errDefine = CheckListNodeInfo(message.ListNode);
-                    SetTextForGui(errDefine, message.MessageName);
-                }
+                //check node of frame
+                errDefine = CheckListNodeInfo(msg.ListNode);
+                SetTextForGui(errDefine, msg.MessageName);
+
                 //Check signal
+                foreach (Signal signal in msg.ListSignal)
+                {
+                    // signal info
+                    errDefine = CheckSignalInfo(signal);
+                    SetTextForGui(errDefine, signal.SignalName);
+
+                    //check node of signal
+                    errDefine = CheckListNodeInfo(signal.ListNode);
+                    SetTextForGui(errDefine, signal.SignalName);
+                }
             }
-            return false;
+            return true;
         }
-        bool SetTextForGui(ErrorDefine eDefine, string messageName)
+        bool SetTextForGui(ErrorDefine eDefine, string name)
         {
             if (eDefine != C_NO_ERROR)
             {
                 // TODO - write log4net here
-                GenerateDBC.SetTextInfo("Message:" + messageName + errObject.GetNotification(errDefine));
+                GenerateDBC.SetTextInfo("Info:" + name + errObject.GetNotification(errDefine));
                 return false;
             }
             return true;
@@ -585,115 +599,17 @@ namespace Ultities.BLL
             return false;
         }
 
-        private ErrorDefine CheckSignalnfo(Signal signal)
-        {
-            /*
-            #region Check signal name
-            if (signal.SignalName == null)
-            {
-                return C_ERROR_SGN_NAME_NULL;
-            }
-            if (signal.SignalName.Length > 32)
-            {
-                return C_ERROR_SGN_NAME_LENGTH_INVALID;
-            }
-            #endregion
-
-            #region Check signal byte order
-            if (signal.SignalByteOrder == null)
-            {
-                return C_ERROR_SGN_BITLENGTH_NULL;
-            }
-
-            bool isSignalByteOrderInvalid = signal.SignalByteOrder.ToLower() == "Motorola LSB" ? true : false;
-            isSignalByteOrderInvalid &= signal.SignalByteOrder.ToLower() == "Motorola MSB" ? true : false;
-
-            if (!isSignalByteOrderInvalid)
-            {
-                return C_ERROR_SGN_BITLENGTH_INVALID;
-            }
-            #endregion
-
-            #region Check signal start bit
-            if (signal.SignalStartBit > 63)
-            {
-                return C_ERROR_SGN_STARTBIT_INVALID;
-            }
-            #endregion
-
-            #region Check signal bit length
-            if (signal.SignalBitLength == 0)
-            {
-                return C_ERROR_SGN_BITLENGTH_NULL;
-            }
-            if (signal.SignalBitLength > 64)
-            {
-                return C_ERROR_SGN_BITLENGTH_INVALID;
-            }
-            #endregion
-
-
-            #region Check signal data type
-            if (signal.SignalDataType == null)
-            {
-                return C_ERROR_SGN_DATATYPE_NULL;
-            }
-
-            bool isValidDataType = signal.SignalDataType.ToLower() == "unsigned" ? true : false;
-            isValidDataType &= signal.SignalDataType.ToLower() == "signed" ? true : false;
-
-            if (!isValidDataType)
-            {
-                return C_ERROR_SGN_DATATYPE_INVALID;
-            }
-            #endregion
-
-            #region Check signal resolution
-
-            #endregion
-
-            #region Check signal offset 
-
-            #endregion
-
-            #region Check signal phy min 
-
-            #endregion
-
-            #region Check signal phy max 
-
-            #endregion
-
-            #region  Check signal hex min 
-
-            #endregion
-
-            #region Check signal hex max 
-
-            #endregion
-
-            #region Check signal init hex 
-
-            #endregion
-
-            #region Check signal invalid hex 
-
-            #endregion
-            */
-            return C_NO_ERROR;
-        }
-
         private ErrorDefine CheckListNodeInfo(List<Node> listNode)
         {
             uint count = 0;
             foreach (Node node in listNode)
             {
-                if (node.SendType == C_INVALID)
+                if (node.SendType != C_INVALID)
                 {
                     count++;
                 }
             }
-            return count > 0 ? C_ERROR_MSG_NOTSEND_RECEIVE : C_NO_ERROR;
+            return count > 0 ? C_NO_ERROR : C_ERROR_MSG_NOTSEND_RECEIVE;
         }
 
         internal ErrorDefine CheckMessageInfo(Messages msg)
@@ -735,7 +651,7 @@ namespace Ultities.BLL
 
             // msg length
             tempNumber = 0;
-            canConvert = int.TryParse(msg.MessageCycleTime, out tempNumber); // Null will return false
+            canConvert = int.TryParse(msg.MessageLength, out tempNumber); // Null will return false
             if (canConvert)
             {
                 if (tempNumber <= 0)
@@ -759,7 +675,12 @@ namespace Ultities.BLL
 
         internal ErrorDefine CheckSignalInfo(Signal signal)
         {
+            uint tempNumber_Positive;
+            int tempNumber_Negative;
+            bool isValid;
+
             // signal name
+            #region
             if (signal.SignalName == null)
             {
                 return C_ERROR_SGN_NAME_NULL;
@@ -768,55 +689,124 @@ namespace Ultities.BLL
             {
                 return C_ERROR_SGN_NAME_LENGTH_G_THAN32;
             }
+            #endregion
 
             // byte order
-            bool isValidByteOrder = signal.SignalByteOrder.ToLower() == "motorola lsb" ? true : false;
-            isValidByteOrder &= signal.SignalByteOrder.ToLower() == "motorola msb" ? true : false;
+            #region
+            isValid = signal.SignalByteOrder.ToLower() == "motorola lsb" ? true : false;
+            isValid &= signal.SignalByteOrder.ToLower() == "motorola msb" ? true : false;
 
-            if (!isValidByteOrder)
+            if (!isValid)
             {
                 return C_ERROR_SGN_BYTEORDER_ONLY_LSB_MSB;
             }
+            #endregion
 
             // start bit
-            //msg cycle time
-            uint tempNumber = 0;
-            bool canConvert = uint.TryParse(signal.SignalStartBit, out tempNumber); // Null will return false
+            #region
+            bool canConvert = uint.TryParse(signal.SignalStartBit, out tempNumber_Positive); // Null will return false
             if (canConvert)
             {
-                if (tempNumber > 63)
+                if (tempNumber_Positive > 63)
                 {
                     return C_ERROR_SGN_STARTBIT_G_THAN63;
                 }
             }
             else
             {
-                return C_ERROR_MSG_CYCLETIME_NULL;
+                return C_ERROR_SGN_STARTBIT_NULL;
             }
+            #endregion
 
             // bit length
+            #region
+            canConvert = uint.TryParse(signal.SignalBitLength, out tempNumber_Positive); // Null will return false
+            if (canConvert)
+            {
+                if (tempNumber_Positive > 63)
+                {
+                    return C_ERROR_SGN_BITLENGTH_G_THAN64;
+                }
+            }
+            else
+            {
+                return C_ERROR_SGN_BITLENGTH_NULL;
+            }
+            #endregion
 
             // data type
+            #region
+            isValid = signal.SignalDataType.ToLower() == "unsigned" ? true : false;
+            isValid &= signal.SignalDataType.ToLower() == "signed" ? true : false;
 
-            // factor
+            if (!isValid)
+            {
+                return C_ERROR_SGN_DATATYPE_ONLY_UNSIGNED_SIGNED;
+            }
+            #endregion
+
+            // resolution (factor)
+            #region
+            tempNumber_Positive = 0;
+            canConvert = uint.TryParse(signal.SignalFactor, out tempNumber_Positive); // Null will return false
+            if (!canConvert)
+            {
+                return C_ERROR_SGN_RESOLUTION_INVALID;
+            }
+            #endregion
 
             // offset
+            #region
+            canConvert = int.TryParse(signal.SignalOffset, out tempNumber_Negative);
+            if (!canConvert)
+            {
+                return C_ERROR_SGN_OFFSET_INVALID;
+            }
+            #endregion
 
             // phy min
+            #region
+            canConvert = int.TryParse(signal.SignalPhyMin, out tempNumber_Negative);
+            if (!canConvert)
+            {
+                return C_ERROR_SGN_PHYMIN_INVALID;
+            }
+            #endregion
 
             // phy max
+            #region
+            canConvert = uint.TryParse(signal.SignalPhyMax, out tempNumber_Positive);
+            if (!canConvert)
+            {
+                return C_ERROR_SGN_PHYMAX_INVALID;
+            }
+            #endregion
 
             // hex min
-
+            #region
+            canConvert = uint.TryParse(signal.SignalHexMin, out tempNumber_Positive);
+            if (!canConvert)
+            {
+                return C_ERROR_SGN_HEXMIN_INVALID;
+            }
+            #endregion
 
             // hex max
+            #region
+            canConvert = uint.TryParse(signal.SignalHexMax, out tempNumber_Positive);
+            if (!canConvert)
+            {
+                return C_ERROR_SGN_HEXMAX_INVALID;
+            }
+            #endregion
 
-            // init hex - check is hexa number if not null
+            // init hex - check whether hexa number if not null
 
-            // invalid hex - check is hexa number if not null
+            // invalid hex - check whether hexa number if not null
 
             return C_NO_ERROR;
         }
+
         bool CheckNumber(string numberString, int outNumber)
         {
             return int.TryParse(numberString, out outNumber);

@@ -18,43 +18,43 @@ namespace Ultities.BLL
             {
                 //Check frame
                 case C_ERROR_MSG_NAME_NULL:
-                    strOutput = "Frame name is missing";
+                    strOutput = " Frame name is missing";
                     break;
 
                 case C_ERROR_MSG_ID_NULL:
-                    strOutput = "Frame ID is missing";
+                    strOutput = " Frame ID is missing";
                     break;
 
                 case C_ERROR_MSG_SENDTYPE_NULL:
-                    strOutput = "Frame send type is missing";
+                    strOutput = " Frame send type is missing";
                     break;
 
                 case C_ERROR_MSG_SENDTYPE_INVALID:
-                    strOutput = "Frame send type is either Cycle or Event";
+                    strOutput = " Frame send type is either Cycle or Event";
                     break;
 
                 case C_ERROR_MSG_CYCLETIME_NULL:
-                    strOutput = "Frame cycle time is missing";
+                    strOutput = " Frame cycle time is missing";
                     break;
 
                 case C_ERROR_MSG_CYCLETIME_L_THAN0:
-                    strOutput = "Frame cycle time must greater than 0";
+                    strOutput = " Frame cycle time must greater than 0";
                     break;
 
                 case C_ERROR_MSG_DLC_NULL:
-                    strOutput = "Frame DLC is missing";
+                    strOutput = " Frame DLC is missing";
                     break;
 
                 case C_ERROR_MSG_DLC_L_THAN0:
-                    strOutput = "Frame DLC must greater than 0";
+                    strOutput = " Frame DLC must greater than 0";
                     break;
 
                 case C_ERROR_MSG_DLC_G_THAN8:
-                    strOutput = "Frame DLC must less than 0";
+                    strOutput = " Frame DLC must less than 0";
                     break;
 
                 case C_ERROR_MSG_NOTSEND_RECEIVE:
-                    strOutput = "At least Frame must be sent or received by one node!";
+                    strOutput = " At least Frame must be sent or received by one node!";
                     break;
 
                 //Check signal

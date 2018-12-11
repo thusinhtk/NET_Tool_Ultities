@@ -20,6 +20,11 @@ namespace Ultities
             if (generateDBCForm != null)
                 generateDBCForm.richTextBox1.AppendText(str + '\n');
         }
+        public static void ClearTextInfo()
+        {
+            if (generateDBCForm != null)
+                generateDBCForm.richTextBox1.Text = "";
+        }
 
         public static void SetMaxProgressBar(int value)
         {
@@ -65,24 +70,10 @@ namespace Ultities
                 ExcelFilePath = excelPath.Text = file;
             }
         }
-        public bool CheckCanMatrix()
-        {
-            ////Check message info
-            //prcs.CheckMessageInfo();
-            //prcs.CheckNodeOfMessage();
-
-            ////Check signal info
-            //prcs.CheckSignalInfo();
-            //prcs.CheckNodeOfSignal();
-
-
-            return true;
-        }
 
         private void checkDBC_Click(object sender, EventArgs e)
         {
-            CheckCanMatrix();
-
+            ValidateData();
         }
 
         bool ValidateData()
@@ -111,7 +102,7 @@ namespace Ultities
 
         private void btnLoadData_Click(object sender, EventArgs e)
         {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            //var watch = System.Diagnostics.Stopwatch.StartNew();
 
             // Set cursor as hourglass
             Cursor.Current = Cursors.WaitCursor;
@@ -120,8 +111,8 @@ namespace Ultities
 
             Cursor.Current = Cursors.Default;
 
-            watch.Stop();
-            var elapsedMs = watch.ElapsedMilliseconds;
+            //watch.Stop();
+            //var elapsedMs = watch.ElapsedMilliseconds;
         }
     }
 }
