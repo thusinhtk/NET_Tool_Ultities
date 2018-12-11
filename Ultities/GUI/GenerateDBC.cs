@@ -21,6 +21,29 @@ namespace Ultities
                 generateDBCForm.richTextBox1.AppendText(str + '\n');
         }
 
+        public static void SetMaxProgressBar(int value)
+        {
+            generateDBCForm.toolStripProgressBar1.Maximum = value;
+        }
+
+        public static void SetProgressBarStatus(double value)
+        {
+            generateDBCForm.toolStripProgressBar1.Value = Convert.ToInt32(value);
+
+            if (generateDBCForm.toolStripProgressBar1.Value < 100)
+            {
+                generateDBCForm.toolStripStatusLabel1.Text = "Loading data...";
+
+                generateDBCForm.toolStripStatusPercent.Text = Convert.ToInt32(value) + "";
+            }
+            else
+            {
+                generateDBCForm.toolStripStatusLabel1.Text = "Loading data successful";
+                generateDBCForm.toolStripStatusPercent.Text = "Done";
+            }
+        }
+
+
         public GenerateDBC()
         {
             InitializeComponent();
@@ -92,13 +115,10 @@ namespace Ultities
 
             // Set cursor as hourglass
             Cursor.Current = Cursors.WaitCursor;
-            toolStripStatusLabel1.Text = "Loading data...";
-                       
+
             prcs.LoadData(ExcelFilePath);
 
-            // Set cursor as default arrow
             Cursor.Current = Cursors.Default;
-            toolStripStatusLabel1.Text = "Load data successful";
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
