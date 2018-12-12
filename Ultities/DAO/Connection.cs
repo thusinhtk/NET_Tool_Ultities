@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using static Ultities.BLL.Constants;
+using static Ultities.Logger.Logger;
 using System.Data;
 using System.Windows.Forms;
 using System.Reflection;
@@ -35,10 +36,16 @@ namespace Ultities.DAO
 
         public bool Connect(string path)
         {
+            //Log4net
+            _log.Info("Connecting data...");
+
             bool result = false;
             _path = path;
             try
             {
+                //Log4net
+                _log.Info("Connecting data with path: " +path);
+
                 xlApp = new Excel.Application();
                 xlWorkBook = xlApp.Workbooks.Open(@path, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
                 xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(CURRENT_SHEET);
@@ -48,6 +55,9 @@ namespace Ultities.DAO
             }
             catch (Exception ex)
             {
+                //Log4net
+                _log.Error(ex);
+
                 result = false;
                 throw new Exception(ex.Message);
             }
@@ -62,6 +72,22 @@ namespace Ultities.DAO
 
         ~Connection()
         {
+            //if (IsOpenConnection())
+            //{
+            //    //xlWorkBook.Close(false, null, null);
+            //    xlWorkBook.Close(false);
+            //    xlApp.Quit();
+
+            //    Marshal.ReleaseComObject(xlWorkSheet);
+            //    Marshal.ReleaseComObject(xlWorkBook);
+            //    Marshal.ReleaseComObject(xlApp);
+            //}
+        }
+        public void CloseConnection()
+        {
+            //Log4net
+            _log.Info("Closing connection...");
+
             if (IsOpenConnection())
             {
                 xlWorkBook.Close(false, null, null);
@@ -70,6 +96,9 @@ namespace Ultities.DAO
                 Marshal.ReleaseComObject(xlWorkSheet);
                 Marshal.ReleaseComObject(xlWorkBook);
                 Marshal.ReleaseComObject(xlApp);
+
+                //Log4net
+                _log.Info("Closed connection");
             }
         }
     }

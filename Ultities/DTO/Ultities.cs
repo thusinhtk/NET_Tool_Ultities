@@ -66,12 +66,6 @@ namespace Ultities.DTO
             C_ERROR_SGN_INITVALUE_NULL,
             C_ERROR_SGN_INITVALUE_INVALID,
 
-            C_ERROR_SGN_UNIT_NULL,
-            C_ERROR_SGN_UNIT_INVALID,
-
-            C_ERROR_SGN_INVALID_NULL,
-            C_ERROR_SGN_INVALID_INVALID,
-
             C_ERROR_SGN_NOTSEND_RECEIVE
         }
 

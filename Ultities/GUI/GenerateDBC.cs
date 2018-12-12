@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using static Ultities.BLL.Constants;
+using static Ultities.Logger.Logger;
 using Ultities.BLL;
 
 namespace Ultities
@@ -73,12 +74,24 @@ namespace Ultities
 
         private void checkDBC_Click(object sender, EventArgs e)
         {
-            ValidateData();
+            if (!ValidateData())
+            {
+                MessageBox.Show("Please see information box or log file for more detail", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                MessageBox.Show("Can matrix file is OK!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         bool ValidateData()
         {
-            return prcs.ValidateData(); ;
+            // Set cursor as hourglass
+            Cursor.Current = Cursors.WaitCursor;
+
+            return prcs.ValidateData();
+
+            Cursor.Current = Cursors.Default;
         }
 
         public void CloseExcelFile(string path)
@@ -97,12 +110,12 @@ namespace Ultities
 
         private void GenerateDBC_Load(object sender, EventArgs e)
         {
-
+            _log.Info("--------------------------" + DateTime.Now + "--------------------------\n");
         }
 
         private void btnLoadData_Click(object sender, EventArgs e)
         {
-            //var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
 
             // Set cursor as hourglass
             Cursor.Current = Cursors.WaitCursor;
@@ -111,8 +124,16 @@ namespace Ultities
 
             Cursor.Current = Cursors.Default;
 
-            //watch.Stop();
-            //var elapsedMs = watch.ElapsedMilliseconds;
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+
+            //Log4net
+            _log.Debug("Excute time: " + elapsedMs / 1000 + " s");
+        }
+
+        private void GenerateDBC_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            prcs.CloseConnect();
         }
     }
 }

@@ -77,6 +77,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Ultities tool";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

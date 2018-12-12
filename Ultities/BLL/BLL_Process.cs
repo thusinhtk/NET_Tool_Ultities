@@ -8,14 +8,14 @@ using Ultities.DTO;
 using Ultities.DAO;
 using static Ultities.DAO.Connection;
 using static Ultities.BLL.Constants;
+using static Ultities.Logger.Logger;
 using Excel = Microsoft.Office.Interop.Excel;
 using static Ultities.DTO.Ultities;
 using static Ultities.DTO.Ultities.SendReceiveType;
 using static Ultities.DTO.Ultities.ErrorDefine;
 using static Ultities.DTO.Ultities.ErrorObject;
 using static Ultities.GenerateDBC;
-
-
+using System.Runtime.InteropServices;
 
 namespace Ultities.BLL
 {
@@ -34,8 +34,19 @@ namespace Ultities.BLL
         private static ErrorObject errObject = new ErrorObject();
         private static ErrorDefine errDefine = C_NO_ERROR;
 
+        public void ResetVariable()
+        {
+            errDefine = C_NO_ERROR;
+            canMatrix.Clear();
+            isLoadingDataBefore = false;
+        }
         public void LoadData(string path)
         {
+            //Log4net
+            _log.Info("Loading data...");
+
+            ResetVariable();
+
             // Open connnect
             cn.Connect(@path);
 
@@ -64,47 +75,71 @@ namespace Ultities.BLL
 
             numberOfRows = range.Rows.Count;
 
+            //Log4net
+            _log.Info("Number of row:" + numberOfRows);
+            _log.Info("Number of columns:" + numberOfColumns);
+
             #endregion
         }
 
         internal bool ValidateData()
         {
+            //Log4net
+            _log.Info("Validating data...");
+
+            if (!isLoadingDataBefore)
+            {
+                MessageBox.Show("Please load data before", "Warning", MessageBoxButtons.OK);
+                return false;
+            }
             // Clear text append before checking
             GenerateDBC.ClearTextInfo();
 
+            bool flagError = true;
             foreach (Messages msg in canMatrix)
             {
                 //check frame info
                 errDefine = CheckMessageInfo(msg);
-                SetTextForGui(errDefine, msg.MessageName);
+                flagError &= SetTextForGui(errDefine, msg.MessageName, "");
 
                 //check node of frame
                 errDefine = CheckListNodeInfo(msg.ListNode);
-                SetTextForGui(errDefine, msg.MessageName);
+                flagError &= SetTextForGui(errDefine, msg.MessageName, "");
 
                 //Check signal
                 foreach (Signal signal in msg.ListSignal)
                 {
                     // signal info
                     errDefine = CheckSignalInfo(signal);
-                    SetTextForGui(errDefine, signal.SignalName);
+                    flagError &= SetTextForGui(errDefine, msg.MessageName, signal.SignalName);
 
                     //check node of signal
                     errDefine = CheckListNodeInfo(signal.ListNode);
-                    SetTextForGui(errDefine, signal.SignalName);
+                    flagError &= SetTextForGui(errDefine, msg.MessageName, signal.SignalName);
                 }
             }
-            return true;
+
+            return flagError;
         }
-        bool SetTextForGui(ErrorDefine eDefine, string name)
+        bool SetTextForGui(ErrorDefine eDefine, string msgName, string sgnName)
         {
             if (eDefine != C_NO_ERROR)
             {
                 // TODO - write log4net here
-                GenerateDBC.SetTextInfo("Info:" + name + errObject.GetNotification(errDefine));
+                _log.Error(msgName + " : " + sgnName + " " + errObject.GetNotification(errDefine));
+
+                GenerateDBC.SetTextInfo("Info:" + msgName + " : " + sgnName + " " + errObject.GetNotification(errDefine));
                 return false;
             }
+            //log4net
+            _log.Info(msgName + " : " + sgnName + " is OK");
+
             return true;
+        }
+
+        internal void CloseConnect()
+        {
+            cn.CloseConnection();
         }
 
         bool IsFrameRow(string frameName, string frameID, string frameSendTye, string frameCycle, string frameLength)
@@ -152,6 +187,9 @@ namespace Ultities.BLL
                     {
                         message.ListSignal = listSignal;
                         canMatrix.Add(message);
+
+                        //log4net
+                        _log.Debug("Adding frame: " + message.MessageName);
 
                         message = null; // Dispose object message
                         listSignal = new List<Signal>();
@@ -239,11 +277,14 @@ namespace Ultities.BLL
                     message.ListSignal = listSignal;
                     canMatrix.Add(message);
 
+                    //log4net
+                    _log.Debug("Adding frame: " + message.MessageName);
+
                     result = true;
                 }
                 double percent = (double)rCnt / Convert.ToDouble(values.GetLength(0));
-
                 SetProgressBarStatus(percent * 100);
+
                 rCnt++;
             }
             
@@ -622,14 +663,14 @@ namespace Ultities.BLL
             }
 
             //msg send type
-            bool isValidSendType = msg.MessageSendType.ToLower() != "cycle" ? true : false;
-            isValidSendType &= msg.MessageSendType.ToLower() != "event" ? true : false;
+            string temp_sendtype = msg.MessageSendType.ToLower();
+            bool isValidSendType = (temp_sendtype == "cycle") || (temp_sendtype == "event") ? true : false;
 
             if (msg.MessageSendType.ToString() == null)
             {
                 return C_ERROR_MSG_SENDTYPE_NULL;
             }
-            else if (isValidSendType)
+            else if (!isValidSendType)
             {
                 return C_ERROR_MSG_SENDTYPE_INVALID;
             }
@@ -646,7 +687,10 @@ namespace Ultities.BLL
             }
             else
             {
-                return C_ERROR_MSG_CYCLETIME_NULL;
+                if (msg.MessageSendType.ToLower() != "event")
+                {
+                    return C_ERROR_MSG_CYCLETIME_NULL;
+                }
             }
 
             // msg length
@@ -677,6 +721,7 @@ namespace Ultities.BLL
         {
             uint tempNumber_Positive;
             int tempNumber_Negative;
+            string temp_str;
             bool isValid;
 
             // signal name
@@ -685,7 +730,7 @@ namespace Ultities.BLL
             {
                 return C_ERROR_SGN_NAME_NULL;
             }
-            if(signal.SignalName.Length >32)
+            if (signal.SignalName.Length > 32)
             {
                 return C_ERROR_SGN_NAME_LENGTH_G_THAN32;
             }
@@ -693,8 +738,8 @@ namespace Ultities.BLL
 
             // byte order
             #region
-            isValid = signal.SignalByteOrder.ToLower() == "motorola lsb" ? true : false;
-            isValid &= signal.SignalByteOrder.ToLower() == "motorola msb" ? true : false;
+            temp_str = signal.SignalByteOrder.ToLower();
+            isValid = ((temp_str == "motorola lsb") || (temp_str == "motorola msb")) ? true : false;
 
             if (!isValid)
             {
@@ -736,8 +781,8 @@ namespace Ultities.BLL
 
             // data type
             #region
-            isValid = signal.SignalDataType.ToLower() == "unsigned" ? true : false;
-            isValid &= signal.SignalDataType.ToLower() == "signed" ? true : false;
+            temp_str = signal.SignalDataType.ToLower();
+            isValid = (temp_str == "unsigned") || (temp_str == "signed") ? true : false;
 
             if (!isValid)
             {
@@ -747,8 +792,8 @@ namespace Ultities.BLL
 
             // resolution (factor)
             #region
-            tempNumber_Positive = 0;
-            canConvert = uint.TryParse(signal.SignalFactor, out tempNumber_Positive); // Null will return false
+            double temp_sgn_resolution;
+            canConvert = double.TryParse(signal.SignalFactor, out temp_sgn_resolution); // Null will return false
             if (!canConvert)
             {
                 return C_ERROR_SGN_RESOLUTION_INVALID;
@@ -757,7 +802,8 @@ namespace Ultities.BLL
 
             // offset
             #region
-            canConvert = int.TryParse(signal.SignalOffset, out tempNumber_Negative);
+            double temp_offset;
+            canConvert = double.TryParse(signal.SignalOffset, out temp_offset);
             if (!canConvert)
             {
                 return C_ERROR_SGN_OFFSET_INVALID;
@@ -766,7 +812,8 @@ namespace Ultities.BLL
 
             // phy min
             #region
-            canConvert = int.TryParse(signal.SignalPhyMin, out tempNumber_Negative);
+            double temp_phymin;
+            canConvert = double.TryParse(signal.SignalPhyMin, out temp_phymin);
             if (!canConvert)
             {
                 return C_ERROR_SGN_PHYMIN_INVALID;
@@ -775,7 +822,8 @@ namespace Ultities.BLL
 
             // phy max
             #region
-            canConvert = uint.TryParse(signal.SignalPhyMax, out tempNumber_Positive);
+            double temp_phymax;
+            canConvert = double.TryParse(signal.SignalPhyMax, out temp_phymax);
             if (!canConvert)
             {
                 return C_ERROR_SGN_PHYMAX_INVALID;
@@ -784,18 +832,30 @@ namespace Ultities.BLL
 
             // hex min
             #region
-            canConvert = uint.TryParse(signal.SignalHexMin, out tempNumber_Positive);
-            if (!canConvert)
+            try
             {
+                tempNumber_Positive = Convert.ToUInt32(signal.SignalHexMin, 16);
+            }
+            catch(Exception ex)
+            {
+                //log4net
+                _log.Error(ex);
+
                 return C_ERROR_SGN_HEXMIN_INVALID;
             }
             #endregion
 
             // hex max
             #region
-            canConvert = uint.TryParse(signal.SignalHexMax, out tempNumber_Positive);
-            if (!canConvert)
+            try
             {
+                tempNumber_Positive = Convert.ToUInt32(signal.SignalHexMax, 16);
+            }
+            catch (Exception ex)
+            {
+                //log4net
+                _log.Error(ex);
+
                 return C_ERROR_SGN_HEXMAX_INVALID;
             }
             #endregion

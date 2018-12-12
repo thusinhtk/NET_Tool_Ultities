@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GenerateDBC));
             this.excelPath = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button1 = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripStatusPercent = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkCanMatrix = new System.Windows.Forms.Button();
@@ -43,7 +45,6 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.toolStripStatusPercent = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -66,23 +67,26 @@
             // 
             // button1
             // 
+            this.button1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.button1.ForeColor = System.Drawing.Color.Black;
             this.button1.Location = new System.Drawing.Point(186, 22);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(163, 25);
             this.button1.TabIndex = 1;
             this.button1.Text = "Click to browse can matrix file...";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
-            this.toolStripProgressBar1,
-            this.toolStripStatusPercent});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 309);
+            this.toolStripStatusPercent,
+            this.toolStripProgressBar1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 314);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(684, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(931, 22);
+            this.statusStrip1.Stretch = false;
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -97,10 +101,17 @@
             this.toolStripProgressBar1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
             // 
+            // toolStripStatusPercent
+            // 
+            this.toolStripStatusPercent.Name = "toolStripStatusPercent";
+            this.toolStripStatusPercent.Size = new System.Drawing.Size(0, 17);
+            // 
             // groupBox1
             // 
+            this.groupBox1.BackColor = System.Drawing.Color.Transparent;
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.excelPath);
+            this.groupBox1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.groupBox1.Location = new System.Drawing.Point(29, 43);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(363, 56);
@@ -110,7 +121,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.BackColor = System.Drawing.Color.Transparent;
             this.groupBox2.Controls.Add(this.checkCanMatrix);
+            this.groupBox2.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.groupBox2.Location = new System.Drawing.Point(12, 153);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(386, 70);
@@ -120,6 +133,7 @@
             // 
             // checkCanMatrix
             // 
+            this.checkCanMatrix.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.checkCanMatrix.Location = new System.Drawing.Point(100, 19);
             this.checkCanMatrix.Name = "checkCanMatrix";
             this.checkCanMatrix.Size = new System.Drawing.Size(164, 36);
@@ -130,7 +144,9 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.BackColor = System.Drawing.Color.Transparent;
             this.groupBox3.Controls.Add(this.genDBC);
+            this.groupBox3.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.groupBox3.Location = new System.Drawing.Point(12, 229);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(386, 63);
@@ -140,6 +156,8 @@
             // 
             // genDBC
             // 
+            this.genDBC.Enabled = false;
+            this.genDBC.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.genDBC.Location = new System.Drawing.Point(101, 19);
             this.genDBC.Name = "genDBC";
             this.genDBC.Size = new System.Drawing.Size(163, 33);
@@ -150,17 +168,21 @@
             // 
             // btnLoadData
             // 
+            this.btnLoadData.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnLoadData.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.btnLoadData.Location = new System.Drawing.Point(97, 83);
             this.btnLoadData.Name = "btnLoadData";
             this.btnLoadData.Size = new System.Drawing.Size(164, 33);
             this.btnLoadData.TabIndex = 6;
             this.btnLoadData.Text = "Load data";
-            this.btnLoadData.UseVisualStyleBackColor = true;
+            this.btnLoadData.UseVisualStyleBackColor = false;
             this.btnLoadData.Click += new System.EventHandler(this.btnLoadData_Click);
             // 
             // groupBox4
             // 
+            this.groupBox4.BackColor = System.Drawing.Color.Transparent;
             this.groupBox4.Controls.Add(this.btnLoadData);
+            this.groupBox4.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.groupBox4.Location = new System.Drawing.Point(15, 21);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(383, 126);
@@ -170,40 +192,44 @@
             // 
             // richTextBox1
             // 
+            this.richTextBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.richTextBox1.Enabled = false;
             this.richTextBox1.Location = new System.Drawing.Point(10, 15);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(247, 238);
+            this.richTextBox1.Size = new System.Drawing.Size(478, 238);
             this.richTextBox1.TabIndex = 8;
             this.richTextBox1.Text = "";
             // 
             // groupBox5
             // 
+            this.groupBox5.BackColor = System.Drawing.Color.Transparent;
             this.groupBox5.Controls.Add(this.richTextBox1);
+            this.groupBox5.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.groupBox5.Location = new System.Drawing.Point(404, 28);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(263, 263);
+            this.groupBox5.Size = new System.Drawing.Size(496, 263);
             this.groupBox5.TabIndex = 9;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Information";
-            // 
-            // toolStripStatusPercent
-            // 
-            this.toolStripStatusPercent.Name = "toolStripStatusPercent";
-            this.toolStripStatusPercent.Size = new System.Drawing.Size(0, 17);
             // 
             // GenerateDBC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(684, 331);
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(931, 336);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox4);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "GenerateDBC";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "GenerateDBC";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.GenerateDBC_FormClosed);
             this.Load += new System.EventHandler(this.GenerateDBC_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
