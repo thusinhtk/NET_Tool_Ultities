@@ -100,11 +100,17 @@ namespace Ultities.BLL
             {
                 //check frame info
                 errDefine = CheckMessageInfo(msg);
-                flagError &= SetTextForGui(errDefine, msg.MessageName, "");
-
+                flagError &= SetTextForGui(errDefine, msg.MessageName);
+               
                 //check node of frame
                 errDefine = CheckListNodeInfo(msg.ListNode);
-                flagError &= SetTextForGui(errDefine, msg.MessageName, "");
+                flagError &= SetTextForGui(errDefine, msg.MessageName);
+
+                if (flagError)
+                {
+                    //log4net
+                    _log.Info(msg.MessageName + " is OK");
+                }
 
                 //Check signal
                 foreach (Signal signal in msg.ListSignal)
@@ -116,11 +122,30 @@ namespace Ultities.BLL
                     //check node of signal
                     errDefine = CheckListNodeInfo(signal.ListNode);
                     flagError &= SetTextForGui(errDefine, msg.MessageName, signal.SignalName);
+
+                    if (flagError)
+                    {
+                        //log4net
+                        _log.Info("\t" + signal.SignalName + " is OK");
+                    }
                 }
             }
 
             return flagError;
         }
+        bool SetTextForGui(ErrorDefine eDefine, string msgName)
+        {
+            if (eDefine != C_NO_ERROR)
+            {
+                // TODO - write log4net here
+                _log.Error(msgName + " : " + errObject.GetNotification(errDefine));
+
+                GenerateDBC.SetTextInfo("Info:" + msgName + " : " + errObject.GetNotification(errDefine));
+                return false;
+            }
+            return true;
+        }
+
         bool SetTextForGui(ErrorDefine eDefine, string msgName, string sgnName)
         {
             if (eDefine != C_NO_ERROR)
@@ -131,8 +156,6 @@ namespace Ultities.BLL
                 GenerateDBC.SetTextInfo("Info:" + msgName + " : " + sgnName + " " + errObject.GetNotification(errDefine));
                 return false;
             }
-            //log4net
-            _log.Info(msgName + " : " + sgnName + " is OK");
 
             return true;
         }
@@ -190,6 +213,7 @@ namespace Ultities.BLL
 
                         //log4net
                         _log.Debug("Adding frame: " + message.MessageName);
+                        _log.Debug("\t Number of signals \t: " + message.ListSignal.Count);
 
                         message = null; // Dispose object message
                         listSignal = new List<Signal>();
@@ -279,6 +303,7 @@ namespace Ultities.BLL
 
                     //log4net
                     _log.Debug("Adding frame: " + message.MessageName);
+                    _log.Debug("\t Number of signals \t: " + message.ListSignal.Count);
 
                     result = true;
                 }
@@ -287,7 +312,8 @@ namespace Ultities.BLL
 
                 rCnt++;
             }
-            
+            //log4net
+            _log.Debug("Number of frames: " + canMatrix.Count);
             #region Code comment for refer, not user FOREVER
             /* temporary comment
              for (rCnt = START_OF_FIRST_ROW; rCnt <= numberOfRows; ++rCnt)
