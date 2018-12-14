@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ultities.BLL
 {
@@ -40,6 +36,8 @@ namespace Ultities.BLL
         public static int START_OF_FIRST_ROW  = Convert.ToInt32(ConfigurationManager.AppSettings["StartOfFirstRow"]);
         public static int NUMBER_LINE_OF_HEADER = Convert.ToInt32(ConfigurationManager.AppSettings["NumberLineOfHeader"]);
         public static string CURRENT_SHEET = ConfigurationManager.AppSettings["CurrentSheet"];
+        public static string NAMEOFESPNODE = ConfigurationManager.AppSettings["NameOfESPNode"];
+
 
         #endregion
     }

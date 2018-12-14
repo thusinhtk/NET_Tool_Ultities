@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Ultities.GUI;
 
 namespace Ultities
 {
@@ -26,6 +20,32 @@ namespace Ultities
         private void dBCToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+
+        }
+
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            DialogResult dialog = MessageBox.Show("Are you sure to exit application", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (dialog != DialogResult.Yes)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void Main_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void compareWithCanMatrixToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GenerateFW frmGenerateFW = new GenerateFW();
+            frmGenerateFW.ShowDialog();
         }
     }
 }

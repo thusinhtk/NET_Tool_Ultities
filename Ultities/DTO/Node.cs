@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Ultities.DTO.Ultities;
+﻿using static Ultities.DTO.Ultities;
 
 namespace Ultities.DTO
 {
