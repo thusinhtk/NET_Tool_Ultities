@@ -29,6 +29,10 @@ namespace Ultities.BLL
         public static int COLUMN_SIGNALUNIT = Convert.ToInt32(ConfigurationManager.AppSettings["Column_SignalUnit"]);
         public static int COLUMN_SIGNALVALUEDESCRIPTION = Convert.ToInt32(ConfigurationManager.AppSettings["Column_SignalValueDescription"]);
 
+        public static string COLUMN_SIGNALDNCIF_NAME = ConfigurationManager.AppSettings["Column_SignalDNCIF_Name"];
+
+
+
         #endregion
 
         #region Other index
@@ -37,6 +41,7 @@ namespace Ultities.BLL
         public static int NUMBER_LINE_OF_HEADER = Convert.ToInt32(ConfigurationManager.AppSettings["NumberLineOfHeader"]);
         public static string CURRENT_SHEET = ConfigurationManager.AppSettings["CurrentSheet"];
         public static string NAMEOFESPNODE = ConfigurationManager.AppSettings["NameOfESPNode"];
+        public static string XML_FWLIST_PATH = ConfigurationManager.AppSettings["XML_FW_List_Path"];
 
 
         #endregion
