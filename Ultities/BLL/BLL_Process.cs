@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Ultities.DTO;
 using Ultities.DAO;
+
 using static Ultities.DAO.Connection;
 using static Ultities.BLL.Constants;
 using static Ultities.Logger.Logger;
-using Excel = Microsoft.Office.Interop.Excel;
 using static Ultities.DTO.Ultities;
 using static Ultities.DTO.Ultities.SendReceiveType;
 using static Ultities.DTO.Ultities.ErrorDefine;
-using static Ultities.DTO.Ultities.ErrorObject;
 using static Ultities.GenerateDBC;
-using System.Runtime.InteropServices;
 
 namespace Ultities.BLL
 {
