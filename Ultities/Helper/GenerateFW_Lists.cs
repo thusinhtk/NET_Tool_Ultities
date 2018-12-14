@@ -1,34 +1,53 @@
-﻿using System.Data;
-using System;
+﻿using System;
+using System.IO;
+using System.Data;
+using System.Linq;
+using System.Xml.Linq;
+using System.Collections.Generic;
 
 using Ultities.DTO;
 
-using static Ultities.BLL.BLL_Process;
-using static Ultities.DTO.Ultities.SendReceiveType;
 using static Ultities.BLL.Constants;
 using static Ultities.GUI.GenerateFW;
+using static Ultities.BLL.BLL_Process;
+using static Ultities.DTO.Ultities.SendReceiveType;
 
 using ClosedXML.Excel;
-using System.IO;
+
 
 namespace Ultities.Helper
 {
     class GenerateFW_Lists
     {
 
-        public static DataTable _dt =new DataTable();
+        public static DataTable _dt = new DataTable();
+        private static IEnumerable<XElement> _record;
 
+        private void ReadXMLFWList(string path)
+        {
+            XElement root = XElement.Load(path);
+            _record = from el in root.Elements("record") select el;
+            //foreach (XElement el in record)
+            //{
+            //    string temp = el.Element("dncif").Value;
+            //    Console.WriteLine(temp);
+            //}
+        }
         public GenerateFW_Lists()
         {
         }
         private void CreateDataTable()
         {
+            ReadXMLFWList(XML_FWLIST_PATH);
+
             CreateHeader(ref _dt);
             CreateData(ref _dt);
         }
 
         private void CreateData(ref DataTable dt)
         {
+            dt.Rows.Clear();
+
             foreach (Messages msg in canMatrix)
             {
                 if (ESPIsReceiveMessage(msg))
@@ -54,14 +73,25 @@ namespace Ultities.Helper
 
                     dt.Rows.Add(frame_name, frame_id, frame_sendtype, frame_cycletime, "", "", fwname, fwtype, "", "", "", "");
 
+                    //For signal
                     foreach (Signal sig in msg.ListSignal)
                     {
                         if (IsSignalInvalid(sig))
                         {
+                            foreach (XElement el in _record)
+                            {
+                                string temp = el.Element("dncif").Value;
+                                if (temp == sig.SignalInterface)
+                                {
+                                    sig.SignalFailureWord = el.Element("failure_word_name").Value;
+                                    break;
+                                }
+                            }
+
                             string signal_name = sig.SignalName;
-                            string signal_interface = ""; //gpy2hc - TODO
-                            string sgn_failure_name = ""; //gpy2hc - TODO
-                            string sgn_failure_type = ""; //gpy2hc - TODO
+                            string signal_interface = sig.SignalInterface; //gpy2hc - TODO
+                            string sgn_failure_name = sig.SignalFailureWord; //gpy2hc - TODO
+                            string sgn_failure_type = "Scl"; //gpy2hc - TODO
 
                             dt.Rows.Add("", "", "", "", signal_name, signal_interface, sgn_failure_name, sgn_failure_type, "", "", "", "");
                         }
@@ -72,6 +102,8 @@ namespace Ultities.Helper
 
         private void CreateHeader(ref DataTable dt)
         {
+            dt.Columns.Clear();
+
             // Add column
             dt.Columns.Add("Frame Name", typeof(string));
             dt.Columns.Add("Frame ID", typeof(string));

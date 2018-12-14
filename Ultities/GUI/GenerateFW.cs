@@ -30,7 +30,7 @@ namespace Ultities.GUI
 
         private void GenerateFW_Load(object sender, EventArgs e)
         {
-            //dataGridView1.DataSource = GenerateFW_Lists._dt;
+            dataGridView1.DataSource = GenerateFW_Lists._dt;
         }
 
         private void export2Excel_Click(object sender, EventArgs e)

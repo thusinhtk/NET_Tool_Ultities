@@ -20,6 +20,8 @@ namespace Ultities.DTO
         private string signalInvalidHex;
         private string signalUnit;
         private string signalValueDescription;
+        private string signalFailureWord;
+        private string signalInterface;
         private List<Node> listNode;
 
         public string SignalName
@@ -240,6 +242,32 @@ namespace Ultities.DTO
             set
             {
                 listNode = value;
+            }
+        }
+
+        public string SignalFailureWord
+        {
+            get
+            {
+                return signalFailureWord;
+            }
+
+            set
+            {
+                signalFailureWord = value;
+            }
+        }
+
+        public string SignalInterface
+        {
+            get
+            {
+                return signalInterface;
+            }
+
+            set
+            {
+                signalInterface = value;
             }
         }
     }

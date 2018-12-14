@@ -173,6 +173,20 @@ namespace Ultities.BLL
             return !isAllNull;
         }
 
+        private int FindIndexOfDNCIFColumn(object[,] obj,int cntColumn)
+        {
+            string temp_dncifname_in_excel;
+            for (int id = cntColumn; id >= 1; id--)
+            {
+                temp_dncifname_in_excel = Convert.ToString(obj[1, id]).ToLower();
+                if (temp_dncifname_in_excel == COLUMN_SIGNALDNCIF_NAME.ToLower())
+                {
+                    return id;
+                }
+            }
+            return -1;
+        }
+
         bool TransferExcelToList()
         {
             bool result = false;       
@@ -257,6 +271,8 @@ namespace Ultities.BLL
                     string signalInvalidHex = Convert.ToString(values[rCnt, COLUMN_SIGNALINVALIDVALUE]);
                     string signalUnit = Convert.ToString(values[rCnt, COLUMN_SIGNALUNIT]);
                     string signalValueDescription = Convert.ToString(values[rCnt, COLUMN_SIGNALVALUEDESCRIPTION]);
+                    string signalDNCIF_Name  = Convert.ToString(values[rCnt, FindIndexOfDNCIFColumn(values,numberOfColumns)]);
+                    string signal_fw_name = "";
 
                     Signal signal = new Signal();
                     signal.SignalName = signalName;
@@ -275,6 +291,8 @@ namespace Ultities.BLL
                     signal.SignalInvalidHex = signalInvalidHex;
                     signal.SignalUnit = signalUnit;
                     signal.SignalValueDescription = signalValueDescription;
+                    signal.SignalInterface = signalDNCIF_Name;
+                    signal.SignalFailureWord = signal_fw_name;
 
                     List<Node> listNodeSignal = new List<Node>();
                     for (cCnt = 22; cCnt <= numberOfColumns; ++cCnt)
