@@ -271,7 +271,9 @@ namespace Ultities.BLL
                     string signalInvalidHex = Convert.ToString(values[rCnt, COLUMN_SIGNALINVALIDVALUE]);
                     string signalUnit = Convert.ToString(values[rCnt, COLUMN_SIGNALUNIT]);
                     string signalValueDescription = Convert.ToString(values[rCnt, COLUMN_SIGNALVALUEDESCRIPTION]);
-                    string signalDNCIF_Name  = Convert.ToString(values[rCnt, FindIndexOfDNCIFColumn(values,numberOfColumns)]);
+
+                    int index_OfDNCIFColumn = FindIndexOfDNCIFColumn(values, numberOfColumns);
+                    string signalDNCIF_Name  = index_OfDNCIFColumn == -1?"": Convert.ToString(values[rCnt, index_OfDNCIFColumn]);
                     string signal_fw_name = "";
 
                     Signal signal = new Signal();
