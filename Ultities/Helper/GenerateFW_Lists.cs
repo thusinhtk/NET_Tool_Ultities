@@ -19,7 +19,6 @@ namespace Ultities.Helper
 {
     class GenerateFW_Lists
     {
-
         public static DataTable _dt = new DataTable();
         private static IEnumerable<XElement> _record;
 
@@ -80,8 +79,8 @@ namespace Ultities.Helper
                         {
                             foreach (XElement el in _record)
                             {
-                                string temp = el.Element("dncif").Value;
-                                if (temp == sig.SignalInterface)
+                                string temp = el.Element("dncif").Value.ToLower();
+                                if (sig.SignalInterface.ToLower().Contains(temp))
                                 {
                                     sig.SignalFailureWord = el.Element("failure_word_name").Value;
                                     break;
@@ -89,9 +88,9 @@ namespace Ultities.Helper
                             }
 
                             string signal_name = sig.SignalName;
-                            string signal_interface = sig.SignalInterface; //gpy2hc - TODO
-                            string sgn_failure_name = sig.SignalFailureWord; //gpy2hc - TODO
-                            string sgn_failure_type = "Scl"; //gpy2hc - TODO
+                            string signal_interface = sig.SignalInterface;
+                            string sgn_failure_name = sig.SignalFailureWord;
+                            string sgn_failure_type = "Scl";
 
                             dt.Rows.Add("", "", "", "", signal_name, signal_interface, sgn_failure_name, sgn_failure_type, "", "", "", "");
                         }
