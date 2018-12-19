@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 
-using static Ultities.Logger.Logger;
 using Ultities.BLL;
+
+using static Ultities.Logger.Logger;
 
 namespace Ultities
 {
