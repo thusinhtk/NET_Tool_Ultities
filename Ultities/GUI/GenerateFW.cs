@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 using Ultities.Helper;
@@ -24,12 +25,31 @@ namespace Ultities.GUI
 
         private void GenerateFW_Load(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = GenerateFW_Lists._dt;
+            g_FWLists.CreateDataTable();
+
+            dataGridView1.DataSource = g_FWLists.Dt;
+            dataGridView1.Refresh();
         }
 
         private void export2Excel_Click(object sender, EventArgs e)
         {
             g_FWLists.Export2Excel();
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+            //row.DefaultCellStyle.BackColor = Color.Blue;
         }
     }
 }

@@ -19,8 +19,21 @@ namespace Ultities.Helper
 {
     class GenerateFW_Lists
     {
-        public static DataTable _dt = new DataTable();
+        private DataTable _dt = new DataTable();
         private static IEnumerable<XElement> _record;
+
+        public DataTable Dt
+        {
+            get
+            {
+                return _dt;
+            }
+
+            set
+            {
+                _dt = value;
+            }
+        }
 
         // Constructor
         public GenerateFW_Lists()
@@ -33,7 +46,7 @@ namespace Ultities.Helper
             _record = from el in root.Elements("record") select el;
         }
 
-        private void CreateDataTable()
+        public void CreateDataTable()
         {
             ReadXMLFWList(XML_FWLIST_PATH);
 
