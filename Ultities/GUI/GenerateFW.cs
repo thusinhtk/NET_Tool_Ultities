@@ -36,11 +36,6 @@ namespace Ultities.GUI
             g_FWLists.Export2Excel();
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
