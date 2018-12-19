@@ -47,7 +47,8 @@ namespace Ultities.Helper
 
             foreach (Messages msg in canMatrix)
             {
-                if (ESPIsReceiveMessage(msg))
+                // Check whether frame is receive and not event frame
+                if (ESPIsReceiveMessage(msg) && !(msg.MessageSendType.ToLower() == "event"))
                 {
                     #region  For frame
                     string frame_name = msg.MessageName;
