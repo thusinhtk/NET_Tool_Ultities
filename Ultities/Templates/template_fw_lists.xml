@@ -64,5 +64,33 @@
 		<signal_name>StatusClutchPedal</signal_name>
 		<dncif>NMSG_ClutchPedalPosition_UB</dncif>
 		<failure_word_name>Scl_ClutchPedalPos_InvalidValue</failure_word_name>
+	</record>	
+	<record>
+		<signal_name>VehTotDistance</signal_name>
+		<dncif>NMSG_VehicleTotalOdo_UL</dncif>
+		<failure_word_name>Scl_VehicleTotDistance_InvalidValue</failure_word_name>
+	</record>	
+	<record>
+		<signal_name>VehDynYawRate</signal_name>
+		<dncif>NMSG_Yrs_ST</dncif>
+		<failure_word_name>Scl_VehDynYawRate_InvalidValue</failure_word_name>
 	</record>
+	<record>
+		<signal_name>LateralAcce</signal_name>
+		<dncif>NMSG_Ays_SW</dncif>
+		<failure_word_name>Scl_LateralAcc_InvalidValue</failure_word_name>
+	</record>
+	<record>
+		<signal_name>LongitudeAcc</signal_name>
+		<dncif>NMSG_Axs_SW</dncif>
+		<failure_word_name>Scl_LongitudeAcc_InvalidValue</failure_word_name>
+	</record>
+	
+	<record>
+		<signal_name>DrvTrqReq</signal_name>
+		<dncif>NMSG_MDriverRequest_SW</dncif>
+		<failure_word_name>Scl_MDriverRequest_InvalidValue</failure_word_name>
+	</record>
+	
+
 </data-set>
