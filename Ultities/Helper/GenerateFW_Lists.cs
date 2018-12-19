@@ -22,19 +22,17 @@ namespace Ultities.Helper
         public static DataTable _dt = new DataTable();
         private static IEnumerable<XElement> _record;
 
+        // Constructor
+        public GenerateFW_Lists()
+        {
+        }
+
         private void ReadXMLFWList(string path)
         {
             XElement root = XElement.Load(path);
             _record = from el in root.Elements("record") select el;
-            //foreach (XElement el in record)
-            //{
-            //    string temp = el.Element("dncif").Value;
-            //    Console.WriteLine(temp);
-            //}
         }
-        public GenerateFW_Lists()
-        {
-        }
+
         private void CreateDataTable()
         {
             ReadXMLFWList(XML_FWLIST_PATH);
@@ -51,7 +49,7 @@ namespace Ultities.Helper
             {
                 if (ESPIsReceiveMessage(msg))
                 {
-                    //For frame
+                    #region  For frame
                     string frame_name = msg.MessageName;
                     string frame_id = msg.MessageID;
                     string frame_sendtype = msg.MessageSendType;
@@ -72,7 +70,10 @@ namespace Ultities.Helper
 
                     dt.Rows.Add(frame_name, frame_id, frame_sendtype, frame_cycletime, "", "", fwname, fwtype, "", "", "", "");
 
-                    //For signal
+                    #endregion
+
+                    #region For signal
+
                     foreach (Signal sig in msg.ListSignal)
                     {
                         if (IsSignalInvalid(sig))
@@ -95,6 +96,9 @@ namespace Ultities.Helper
                             dt.Rows.Add("", "", "", "", signal_name, signal_interface, sgn_failure_name, sgn_failure_type, "", "", "", "");
                         }
                     }
+
+                    #endregion
+
                 }
             }
         }
@@ -131,6 +135,9 @@ namespace Ultities.Helper
                     return true;
                 }
             }
+
+            #region for signal
+
             //else if (obj.GetType() == typeof(Signal))
             //{
             //    Signal sgn = (Signal)obj;
@@ -142,6 +149,9 @@ namespace Ultities.Helper
             //        }
             //    }
             //}
+
+            #endregion
+
             return false;
         }
         private bool IsSignalInvalid(Signal sig)
@@ -154,17 +164,17 @@ namespace Ultities.Helper
             CreateDataTable();
 
             string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            path = path + "\\Generate\\";
 
             //Exporting to Excel
-            string folderPath = path+"\\Generate\\";
-            if (!Directory.Exists(folderPath))
+            if (!Directory.Exists(path))
             {
-                Directory.CreateDirectory(folderPath);
+                Directory.CreateDirectory(path);
             }
             using (XLWorkbook wb = new XLWorkbook())
             {
                 wb.Worksheets.Add(_dt, "FailureWord_List");
-                wb.SaveAs(folderPath + "FW_Lists.xlsx");
+                wb.SaveAs(path + "FW_Lists.xlsx");
             }
         }
 

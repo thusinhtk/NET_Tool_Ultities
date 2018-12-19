@@ -130,7 +130,6 @@ namespace Ultities.BLL
                 default:
                     strOutput = "";
                     break;
-
             }
             return strOutput;
         }

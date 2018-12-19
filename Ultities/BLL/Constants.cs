@@ -31,8 +31,6 @@ namespace Ultities.BLL
 
         public static string COLUMN_SIGNALDNCIF_NAME = ConfigurationManager.AppSettings["Column_SignalDNCIF_Name"];
 
-
-
         #endregion
 
         #region Other index
@@ -42,7 +40,6 @@ namespace Ultities.BLL
         public static string CURRENT_SHEET = ConfigurationManager.AppSettings["CurrentSheet"];
         public static string NAMEOFESPNODE = ConfigurationManager.AppSettings["NameOfESPNode"];
         public static string XML_FWLIST_PATH = ConfigurationManager.AppSettings["XML_FW_List_Path"];
-
 
         #endregion
     }

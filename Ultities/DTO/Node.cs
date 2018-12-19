@@ -6,6 +6,7 @@ namespace Ultities.DTO
     {
         private string nodeName;
         private SendReceiveType sendType;
+
         public string NodeName
         {
             get

@@ -15,7 +15,8 @@ namespace Ultities.DTO
         {
             C_NO_ERROR = 0,
 
-            // MESSAGE
+            #region MESSAGE - FRAME
+
             C_ERROR_MSG_NAME_NULL,
 
             C_ERROR_MSG_ID_NULL,
@@ -32,12 +33,15 @@ namespace Ultities.DTO
 
             C_ERROR_MSG_NOTSEND_RECEIVE,
 
-            //SIGNAL
+            #endregion
+
+            #region SIGNAL
+
             C_ERROR_SGN_NAME_NULL,
             C_ERROR_SGN_NAME_LENGTH_G_THAN32,
 
             C_ERROR_SGN_BYTEORDER_ONLY_LSB_MSB,
-          
+
             C_ERROR_SGN_STARTBIT_NULL,
             C_ERROR_SGN_STARTBIT_G_THAN63,
 
@@ -62,6 +66,8 @@ namespace Ultities.DTO
             C_ERROR_SGN_INITVALUE_INVALID,
 
             C_ERROR_SGN_NOTSEND_RECEIVE
+
+            #endregion
         }
 
         public struct ErrorObject
@@ -100,6 +106,7 @@ namespace Ultities.DTO
                 this.errorType = errorType;
                 this.errorMessageOutput = ErrorNotification.NotificationString(errorType);
             }
+
             public string GetNotification(ErrorDefine errorType)
             {
                 return ErrorNotification.NotificationString(errorType);

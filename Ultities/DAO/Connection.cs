@@ -63,19 +63,6 @@ namespace Ultities.DAO
             return xlApp != null ? true : false;
         }
 
-        ~Connection()
-        {
-            //if (IsOpenConnection())
-            //{
-            //    //xlWorkBook.Close(false, null, null);
-            //    xlWorkBook.Close(false);
-            //    xlApp.Quit();
-
-            //    Marshal.ReleaseComObject(xlWorkSheet);
-            //    Marshal.ReleaseComObject(xlWorkBook);
-            //    Marshal.ReleaseComObject(xlApp);
-            //}
-        }
         public void CloseConnection()
         {
             //Log4net

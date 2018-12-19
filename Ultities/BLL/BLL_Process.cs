@@ -36,6 +36,7 @@ namespace Ultities.BLL
             canMatrix.Clear();
             isLoadingDataBefore = false;
         }
+
         public void LoadData(string path)
         {
             //Log4net
@@ -54,6 +55,7 @@ namespace Ultities.BLL
 
             isLoadingDataBefore = true;
         }
+
         void SetNumberColumnsAndRows()
         {
             #region Set number of column and rows
@@ -113,11 +115,11 @@ namespace Ultities.BLL
                 {
                     // signal info
                     errDefine = CheckSignalInfo(signal);
-                    flagError &= SetTextForGui(errDefine, msg.MessageName, signal.SignalName);
+                    flagError &= SetTextForGUI(errDefine, msg.MessageName, signal.SignalName);
 
                     //check node of signal
                     errDefine = CheckListNodeInfo(signal.ListNode);
-                    flagError &= SetTextForGui(errDefine, msg.MessageName, signal.SignalName);
+                    flagError &= SetTextForGUI(errDefine, msg.MessageName, signal.SignalName);
 
                     if (flagError)
                     {
@@ -129,6 +131,7 @@ namespace Ultities.BLL
 
             return flagError;
         }
+
         bool SetTextForGui(ErrorDefine eDefine, string msgName)
         {
             if (eDefine != C_NO_ERROR)
@@ -142,7 +145,7 @@ namespace Ultities.BLL
             return true;
         }
 
-        bool SetTextForGui(ErrorDefine eDefine, string msgName, string sgnName)
+        bool SetTextForGUI(ErrorDefine eDefine, string msgName, string sgnName)
         {
             if (eDefine != C_NO_ERROR)
             {
@@ -446,241 +449,6 @@ namespace Ultities.BLL
 
             return result;
         }
-            
-        
-        bool LoadingData()
-        {
-            /*
-            canMatrix = new List<Messages>();
-
-            #region Init data for list can matrix
-
-            bool result = false;
-            //try
-            //{
-            int rCnt, cCnt;
-
-            for (rCnt = START_OF_FIRST_ROW; rCnt <= numberOfRows; ++rCnt)
-            {
-                string strMessageName = Convert.ToString(range.Cells[rCnt, COLUMN_MESSAGENAME].Value2);
-                if (strMessageName != null)
-                {
-
-                    #region Add info for message
-
-                    Messages message = new Messages();
-
-                    message.MessageName = strMessageName;
-                    message.MessageID = Convert.ToString(range.Cells[rCnt, COLUMN_MESSAGEID].Value2);
-                    message.MessageSendType = Convert.ToString(range.Cells[rCnt, COLUMN_MESSAGESENDTYPE].Value2);
-
-
-                    int messageCycleTime;
-                    string messageST = message.MessageSendType;
-                    messageCycleTime = (messageST.ToLower()) == "event" ? 0 : Convert.ToInt16(range.Cells[rCnt, COLUMN_MESSAGECYCLE].Value2);
-                    message.MessageCycleTime = Convert.ToUInt32(messageCycleTime);
-
-                    message.MessageLength = Convert.ToUInt16(range.Cells[rCnt, COLUMN_MESSAGEDLC].Value2);
-
-                    #endregion
-
-                    #region check message info
-
-                    errDefine = CheckMessageInfo(message);
-                    if (errDefine != C_NO_ERROR)
-                    {
-                        // TODO - write log4net here
-
-                        errObject = new ErrorObject(errDefine, message.MessageName);
-                        MessageBox.Show("Message:" + message.MessageName + " - " + errObject.ErrorMessageOutput);
-                        return false;
-                    }
-
-                    #endregion
-
-                    #region ADD node for message
-
-                    List<Node> listNode = new List<Node>();
-                    for (cCnt = 22; cCnt <= numberOfColumns; ++cCnt)
-                    {
-                        Node node = new Node();
-                        node.NodeName = Convert.ToString(range.Cells[1, cCnt].Value2);
-
-                        string str = Convert.ToString(range.Cells[rCnt, cCnt].Value2);
-                        SendReceiveType nodeSendType = str == "s" ? C_SEND : str == "r" ? C_RECEIVE : C_INVALID;
-                        node.SendType = nodeSendType;
-
-                        listNode.Add(node);
-                    }
-
-                    #region Check node info of message
-
-                    errDefine = CheckListNodeInfo(listNode);
-                    if (errDefine != C_NO_ERROR)
-                    {
-                        // TODO - write log4net here
-
-                        errObject = new ErrorObject(errDefine, message.MessageName);
-                        MessageBox.Show("Message:" + message.MessageName + " - " + errObject.ErrorMessageOutput);
-                        return false;
-                    }
-
-                    #endregion
-
-                    #endregion
-
-                    #region Add signal for each message
-
-                    List<Signal> listSignal = new List<Signal>();
-                    int id = ++rCnt;
-                    while (id <= numberOfRows)
-                    {
-                        strMessageName = Convert.ToString(range.Cells[id, COLUMN_MESSAGENAME].Value2);
-                        string messageID = Convert.ToString(range.Cells[id, COLUMN_MESSAGEID].Value2);
-                        if (strMessageName == null && messageID == null) //Check whether message is exist to add signal
-                        {
-                            #region Add info for signal
-
-                            #region Load singal info
-
-                            string signalName = Convert.ToString(range.Cells[id, COLUMN_SIGNALNAME].Value2);
-                            string signalDescription = Convert.ToString(range.Cells[id, COLUMN_SIGNALDESCRIPTION].Value2);
-                            string signalByteOrder = Convert.ToString(range.Cells[id, COLUMN_SIGNALBYTEFORMAT].Value2);
-
-                            string signalStartBit = Convert.ToString(range.Cells[id, COLUMN_SIGNALSTARTBIT].Value2);
-                            signalStartBit = signalStartBit == null ? "0" : signalStartBit;
-
-                            string signalBitLength = Convert.ToString(range.Cells[id, COLUMN_SIGNALBITLENGTH].Value2);
-                            signalBitLength = signalBitLength == null ? "0" : signalBitLength;
-
-                            string signalDataType = Convert.ToString(range.Cells[id, COLUMN_SIGNALDATATYPE].Value2);
-                            string signalFactor = Convert.ToString(range.Cells[id, COLUMN_SIGNALRESOLUTION].Value2);
-                            string signalOffset = Convert.ToString(range.Cells[id, COLUMN_SIGNALOFFSET].Value2);
-                            string signalPhyMin = Convert.ToString(range.Cells[id, COLUMN_SIGNALMINPHY].Value2);
-                            string signalPhyMax = Convert.ToString(range.Cells[id, COLUMN_SIGNALMAXPHY].Value2);
-                            string signalHexMin = Convert.ToString(range.Cells[id, COLUMN_SIGNALMINHEX].Value2);
-                            string signalHexMax = Convert.ToString(range.Cells[id, COLUMN_SIGNALMAXHEX].Value2);
-                            string signalInitHex = Convert.ToString(range.Cells[id, COLUMN_SIGNALINITVALUE].Value2);
-                            string signalInvalidHex = Convert.ToString(range.Cells[id, COLUMN_SIGNALINVALIDVALUE].Value2);
-                            string signalUnit = Convert.ToString(range.Cells[id, COLUMN_SIGNALUNIT].Value2);
-                            string signalValueDescription = Convert.ToString(range.Cells[id, COLUMN_SIGNALVALUEDESCRIPTION].Value2);
-
-                            #endregion
-
-                            Signal signal = new Signal();
-                            signal.SignalName = signalName;
-                            signal.SignalDescription = signalDescription;
-                            signal.SignalByteOrder = signalByteOrder;
-                            signal.SignalStartBit = Convert.ToUInt16(signalStartBit);
-                            signal.SignalBitLength = Convert.ToUInt16(signalBitLength);
-                            signal.SignalDataType = signalDataType;
-                            signal.SignalFactor = Convert.ToDouble(signalFactor);
-                            signal.SignalOffset = Convert.ToDouble(signalOffset);
-                            signal.SignalPhyMin = Convert.ToDouble(signalPhyMin);
-                            signal.SignalPhyMax = Convert.ToDouble(signalPhyMax);
-                            signal.SignalHexMin = Convert.ToUInt32(signalHexMin, 16);
-                            signal.SignalHexMax = Convert.ToUInt64(signalHexMax, 16);
-                            signal.SignalInitHex = Convert.ToUInt32(signalInitHex, 16);
-                            signal.SignalInvalidHex = Convert.ToUInt64(signalInvalidHex, 16);
-                            signal.SignalUnit = signalUnit;
-                            signal.SignalValueDescription = signalValueDescription;
-
-                            #region Check signal info
-
-                            errDefine = CheckSignalnfo(signal);
-                            if (errDefine != C_NO_ERROR)
-                            {
-                                // TODO - write log4net here
-
-                                errObject = new ErrorObject(errDefine, message.MessageName);
-                                MessageBox.Show("Message:" + message.MessageName + " - " + errObject.ErrorMessageOutput);
-                                return false;
-                            }
-
-                            #endregion
-
-                            #region ADD node for signal
-
-                            List<Node> listNodeSignal = new List<Node>();
-                            for (cCnt = 22; cCnt <= numberOfColumns; ++cCnt)
-                            {
-                                Node node = new Node();
-                                node.NodeName = Convert.ToString(range.Cells[1, cCnt].Value2);
-
-                                string str = Convert.ToString(range.Cells[rCnt, cCnt].Value2);
-                                SendReceiveType nodeSendType = str == "s" ? C_SEND : str == "r" ? C_RECEIVE : C_INVALID;
-                                node.SendType = nodeSendType;
-
-                                listNodeSignal.Add(node);
-                            }
-
-                            #region Check node info of signal
-
-                            errDefine = CheckListNodeInfo(listNode);
-                            if (errDefine != C_NO_ERROR)
-                            {
-                                // TODO - write log4net here
-
-                                errObject = new ErrorObject(errDefine, message.MessageName);
-                                MessageBox.Show("Message:" + message.MessageName + " - " + errObject.ErrorMessageOutput);
-                                return false;
-                            }
-
-                            #endregion
-
-                            signal.ListNode = listNodeSignal; // Set list node for each signal
-
-                            #endregion
-
-
-
-
-                            listSignal.Add(signal); // Merge list of signal
-                        }
-                        else
-                        {
-                            rCnt = id - 1; //set index in last signal of previous message
-                            break;
-                        }
-                        id++;
-                    }
-
-                    #endregion
-
-                    // Add node and signal for message
-                    message.ListNode = listNode;
-                    message.ListSignal = listSignal;
-
-                    canMatrix.Add(message);
-                }
-                else
-                {
-                    // TODO - write log4net here
-
-                    errObject = new ErrorObject(C_ERROR_MSG_NAME_NULL, "");
-                    MessageBox.Show(errObject.ErrorMessageOutput + "[Row,Column] : [" + rCnt + "," + COLUMN_MESSAGENAME + "]");
-                    return false;
-                }
-            }
-            result = true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    // Write log4net here
-            //    string str = ex.Message;
-            //    result = false;
-            //}
-            //finally
-            //{
-            //}
-
-            return result;
-
-            #endregion
-            #endregion
-            */
-            return false;
-        }
 
         private ErrorDefine CheckListNodeInfo(List<Node> listNode)
         {
@@ -762,7 +530,6 @@ namespace Ultities.BLL
         internal ErrorDefine CheckSignalInfo(Signal signal)
         {
             uint tempNumber_Positive;
-            int tempNumber_Negative;
             string temp_str;
             bool isValid;
 
