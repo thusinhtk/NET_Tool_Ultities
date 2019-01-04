@@ -46,6 +46,7 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnCreateFWList = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -146,6 +147,7 @@
             // groupBox3
             // 
             this.groupBox3.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox3.Controls.Add(this.btnCreateFWList);
             this.groupBox3.Controls.Add(this.genDBC);
             this.groupBox3.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.groupBox3.Location = new System.Drawing.Point(19, 324);
@@ -159,9 +161,9 @@
             // 
             this.genDBC.Enabled = false;
             this.genDBC.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.genDBC.Location = new System.Drawing.Point(101, 19);
+            this.genDBC.Location = new System.Drawing.Point(56, 19);
             this.genDBC.Name = "genDBC";
-            this.genDBC.Size = new System.Drawing.Size(163, 33);
+            this.genDBC.Size = new System.Drawing.Size(105, 33);
             this.genDBC.TabIndex = 0;
             this.genDBC.Text = "Generate DBC file";
             this.genDBC.UseVisualStyleBackColor = true;
@@ -227,6 +229,17 @@
             this.label2.Text = "LOADING CAN MATRIX FILE";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // btnCreateFWList
+            // 
+            this.btnCreateFWList.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btnCreateFWList.Location = new System.Drawing.Point(188, 19);
+            this.btnCreateFWList.Name = "btnCreateFWList";
+            this.btnCreateFWList.Size = new System.Drawing.Size(105, 33);
+            this.btnCreateFWList.TabIndex = 1;
+            this.btnCreateFWList.Text = "Create FW list";
+            this.btnCreateFWList.UseVisualStyleBackColor = true;
+            this.btnCreateFWList.Click += new System.EventHandler(this.btnCreateFWList_Click);
+            // 
             // GenerateDBC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -279,5 +292,6 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusPercent;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnCreateFWList;
     }
 }

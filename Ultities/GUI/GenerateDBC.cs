@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 
 using Ultities.BLL;
-
+using Ultities.GUI;
 using static Ultities.Logger.Logger;
 
 namespace Ultities
@@ -73,13 +73,21 @@ namespace Ultities
 
         private void checkDBC_Click(object sender, EventArgs e)
         {
-            if (!ValidateData())
+            if (BLL_Process.isLoadingDataBefore)
             {
-                MessageBox.Show("Please see information box or log file for more detail", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                if (!ValidateData())
+                {
+                    MessageBox.Show("Please see information box or log file for more detail", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    MessageBox.Show("Can matrix file is OK!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
             else
             {
-                MessageBox.Show("Can matrix file is OK!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please perform step 1 above before!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -114,25 +122,48 @@ namespace Ultities
 
         private void btnLoadData_Click(object sender, EventArgs e)
         {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            if (excelPath.Text != "")
+            {
 
-            // Set cursor as hourglass
-            Cursor.Current = Cursors.WaitCursor;
+                var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            prcs.LoadData(ExcelFilePath);
+                // Set cursor as hourglass
+                Cursor.Current = Cursors.WaitCursor;
 
-            Cursor.Current = Cursors.Default;
+                prcs.LoadData(ExcelFilePath);
 
-            watch.Stop();
-            var elapsedMs = watch.ElapsedMilliseconds;
+                Cursor.Current = Cursors.Default;
 
-            //Log4net
-            _log.Debug("Excute time: " + elapsedMs / 1000 + " s");
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+
+                //Log4net
+                _log.Debug("Excute time: " + elapsedMs / 1000 + " s");
+            }
+            else
+            {
+                MessageBox.Show("Please provide link can matrix file", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                button1_Click(sender, e);
+            }
         }
 
         private void GenerateDBC_FormClosed(object sender, FormClosedEventArgs e)
         {
             prcs.CloseConnect();
+        }
+
+        private void btnCreateFWList_Click(object sender, EventArgs e)
+        {
+            if (BLL_Process.isLoadingDataBefore)
+            {
+
+                GenerateFW frmGenerateFW = new GenerateFW();
+                frmGenerateFW.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("Please load data before!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
