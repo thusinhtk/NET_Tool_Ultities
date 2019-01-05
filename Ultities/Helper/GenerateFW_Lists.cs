@@ -73,8 +73,16 @@ namespace Ultities.Helper
                     string fwname = fwtype + "_" + frame_name + "_Timeout" + Environment.NewLine;
                     if (IsGen93Checked())
                     {
-                        fwname = fwname + fwtype + "_" + frame_name + "_Checksum" + Environment.NewLine;
-                        fwname = fwname + fwtype + "_" + frame_name + "_AliveCounter" + Environment.NewLine;
+                        if(IsChecksumFrame(msg))
+                        {
+                            fwname = fwname + fwtype + "_" + frame_name + "_Checksum" + Environment.NewLine;
+                        }
+                        if(IsRntCounterFrame(msg))
+                        {
+                            fwname = fwname + fwtype + "_" + frame_name + "_AliveCounter" + Environment.NewLine;
+                        }
+                        
+
                         fwname = fwname + fwtype + "_" + frame_name + "_DataLengthCode";
                     }
                     else
@@ -115,6 +123,30 @@ namespace Ultities.Helper
 
                 }
             }
+        }
+
+        private bool IsChecksumFrame(Messages msg)
+        {
+            foreach(Signal sig in msg.ListSignal)
+            {
+                if(sig.SignalName.ToLower().Contains("checksum"))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool IsRntCounterFrame(Messages msg)
+        {
+            foreach (Signal sig in msg.ListSignal)
+            {
+                if (sig.SignalName.ToLower().Contains("rollingcounter"))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void CreateHeader(ref DataTable dt)
