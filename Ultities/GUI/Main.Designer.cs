@@ -35,6 +35,8 @@
             this.compareWithCanMatrixToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.generateSciptForCSW4ShellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -42,6 +44,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.dBCToolStripMenuItem,
+            this.toolsToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -100,6 +103,20 @@
             this.label1.Text = "© Copyright 2019 NET Team (RBVH).";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.generateSciptForCSW4ShellToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // generateSciptForCSW4ShellToolStripMenuItem
+            // 
+            this.generateSciptForCSW4ShellToolStripMenuItem.Name = "generateSciptForCSW4ShellToolStripMenuItem";
+            this.generateSciptForCSW4ShellToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.generateSciptForCSW4ShellToolStripMenuItem.Text = "Generate scipt for CSW4Shell";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -132,6 +149,8 @@
         private System.Windows.Forms.ToolStripMenuItem compareWithCanMatrixToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem generateSciptForCSW4ShellToolStripMenuItem;
     }
 }
 
