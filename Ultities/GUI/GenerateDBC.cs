@@ -156,6 +156,8 @@ namespace Ultities
         {
             if (BLL_Process.isLoadingDataBefore)
             {
+                // log4net
+                _log.Info("-------------------------- Generate FW list--------------------------\n");
 
                 GenerateFW frmGenerateFW = new GenerateFW();
                 frmGenerateFW.ShowDialog();

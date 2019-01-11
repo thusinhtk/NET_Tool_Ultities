@@ -48,5 +48,11 @@ namespace Ultities
             GenerateFW frmGenerateFW = new GenerateFW();
             frmGenerateFW.ShowDialog();
         }
+
+        private void genScripForBSWShim_Click(object sender, EventArgs e)
+        {
+            GenerateCsript_BSWSim frmGenFWList = new GenerateCsript_BSWSim();
+            frmGenFWList.ShowDialog();
+        }
     }
 }

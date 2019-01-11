@@ -33,10 +33,10 @@
             this.dBCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareWithCanMatrixToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.genScripForBSWShim = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
-            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.generateSciptForCSW4ShellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -80,6 +80,21 @@
             this.compareWithCanMatrixToolStripMenuItem.Text = "2. Generate FW list";
             this.compareWithCanMatrixToolStripMenuItem.Click += new System.EventHandler(this.compareWithCanMatrixToolStripMenuItem_Click);
             // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.genScripForBSWShim});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // genScripForBSWShim
+            // 
+            this.genScripForBSWShim.Name = "genScripForBSWShim";
+            this.genScripForBSWShim.Size = new System.Drawing.Size(214, 22);
+            this.genScripForBSWShim.Text = "Generate scipt for BSWSim";
+            this.genScripForBSWShim.Click += new System.EventHandler(this.genScripForBSWShim_Click);
+            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Image = global::Ultities.Properties.Resources.exit;
@@ -102,20 +117,6 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "© Copyright 2019 NET Team (RBVH).";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // toolsToolStripMenuItem
-            // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.generateSciptForCSW4ShellToolStripMenuItem});
-            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
-            this.toolsToolStripMenuItem.Text = "Tools";
-            // 
-            // generateSciptForCSW4ShellToolStripMenuItem
-            // 
-            this.generateSciptForCSW4ShellToolStripMenuItem.Name = "generateSciptForCSW4ShellToolStripMenuItem";
-            this.generateSciptForCSW4ShellToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.generateSciptForCSW4ShellToolStripMenuItem.Text = "Generate scipt for CSW4Shell";
             // 
             // Main
             // 
@@ -150,7 +151,7 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem generateSciptForCSW4ShellToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem genScripForBSWShim;
     }
 }
 

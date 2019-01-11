@@ -3,6 +3,7 @@ using System.IO;
 using System.Data;
 using System.Linq;
 using System.Xml.Linq;
+using System.Windows.Forms;
 using System.Collections.Generic;
 
 using Ultities.DTO;
@@ -10,6 +11,7 @@ using Ultities.DTO;
 using static Ultities.BLL.Constants;
 using static Ultities.GUI.GenerateFW;
 using static Ultities.BLL.BLL_Process;
+using static Ultities.Logger.Logger;
 using static Ultities.DTO.Ultities.SendReceiveType;
 
 using ClosedXML.Excel;
@@ -48,10 +50,16 @@ namespace Ultities.Helper
 
         public void CreateDataTable()
         {
+            // log4net
+            _log.Info("Generate FW list: /t Creating data ...");
+
             ReadXMLFWList(XML_FWLIST_PATH);
 
             CreateHeader(ref _dt);
             CreateData(ref _dt);
+
+            // log4net
+            _log.Info("Generate FW list: /t Create data successfuly.");
         }
 
         private void CreateData(ref DataTable dt)
@@ -73,15 +81,15 @@ namespace Ultities.Helper
                     string fwname = fwtype + "_" + frame_name + "_Timeout" + Environment.NewLine;
                     if (IsGen93Checked())
                     {
-                        if(IsChecksumFrame(msg))
+                        if (IsChecksumFrame(msg))
                         {
                             fwname = fwname + fwtype + "_" + frame_name + "_Checksum" + Environment.NewLine;
                         }
-                        if(IsRntCounterFrame(msg))
+                        if (IsRntCounterFrame(msg))
                         {
                             fwname = fwname + fwtype + "_" + frame_name + "_AliveCounter" + Environment.NewLine;
                         }
-                        
+
 
                         fwname = fwname + fwtype + "_" + frame_name + "_DataLengthCode";
                     }
@@ -127,9 +135,13 @@ namespace Ultities.Helper
 
         private bool IsChecksumFrame(Messages msg)
         {
-            foreach(Signal sig in msg.ListSignal)
+            foreach (Signal sig in msg.ListSignal)
             {
-                if(sig.SignalName.ToLower().Contains("checksum"))
+                string signalName_Lower = sig.SignalName.ToLower();
+                if ((signalName_Lower.Contains("checksum")) ||
+                    (signalName_Lower.Contains("chksm")) ||
+                    (signalName_Lower.Contains("crccheck"))
+                   )
                 {
                     return true;
                 }
@@ -141,7 +153,12 @@ namespace Ultities.Helper
         {
             foreach (Signal sig in msg.ListSignal)
             {
-                if (sig.SignalName.ToLower().Contains("rollingcounter"))
+                string signalName_Lower = sig.SignalName.ToLower();
+
+                if ((signalName_Lower.Contains("rollingcounter")) ||
+                    (signalName_Lower.Contains("messagecounter")) ||
+                    (signalName_Lower.Contains("alive"))
+                   )
                 {
                     return true;
                 }
@@ -205,8 +222,9 @@ namespace Ultities.Helper
             return sig.SignalInvalidHex != "" ? true : false;
         }
 
-        public void Export2Excel()
+        public bool Export2Excel()
         {
+            bool result = false;
             CreateDataTable();
 
             string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -220,8 +238,27 @@ namespace Ultities.Helper
             using (XLWorkbook wb = new XLWorkbook())
             {
                 wb.Worksheets.Add(_dt, "FailureWord_List");
-                wb.SaveAs(path + "FW_Lists.xlsx");
+                try
+                {
+                    wb.SaveAs(path + "FW_Lists.xlsx");
+
+                    // log4net log error here
+                    _log.Error("Generate FW_Lists.xlsx successful.");
+
+                    MessageBox.Show("Generated succesful", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    result = true;
+                }
+                catch(Exception ex)
+                {
+                    // log4net log error here
+                    _log.Error("FW_Lists.xlsx is opening" + ex);
+
+                    MessageBox.Show(ex.ToString(), "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    result = false;
+                }
             }
+            return result;
         }
 
     }

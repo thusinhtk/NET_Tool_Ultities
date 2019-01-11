@@ -37,6 +37,11 @@ namespace Ultities.BLL
             isLoadingDataBefore = false;
         }
 
+        public void BLL_Connect(string path)
+        {
+            cn.Connect(@path);
+        }
+
         public void LoadData(string path)
         {
             //Log4net
@@ -45,7 +50,7 @@ namespace Ultities.BLL
             ResetVariable();
 
             // Open connnect
-            cn.Connect(@path);
+            BLL_Connect(path);
 
             // Set number of column and rows
             SetNumberColumnsAndRows();

@@ -108,6 +108,12 @@
     <Compile Include="DTO\Node.cs" />
     <Compile Include="DTO\Signal.cs" />
     <Compile Include="DTO\Ultities.cs" />
+    <Compile Include="GUI\GenerateCsript_BSWSim.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\GenerateCsript_BSWSim.Designer.cs">
+      <DependentUpon>GenerateCsript_BSWSim.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\GenerateDBC.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,9 +133,13 @@
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
     <Compile Include="Helper\GenerateFW_Lists.cs" />
+    <Compile Include="Helper\GenerateScriptForBSWSim.cs" />
     <Compile Include="Logger\Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GUI\GenerateCsript_BSWSim.resx">
+      <DependentUpon>GenerateCsript_BSWSim.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\GenerateDBC.resx">
       <DependentUpon>GenerateDBC.cs</DependentUpon>
     </EmbeddedResource>

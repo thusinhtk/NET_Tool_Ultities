@@ -33,7 +33,15 @@ namespace Ultities.GUI
 
         private void export2Excel_Click(object sender, EventArgs e)
         {
-            g_FWLists.Export2Excel();
+            bool result = g_FWLists.Export2Excel();
+            if (result)
+            {
+                MessageBox.Show("Create FW list successful!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Error when generating FW list file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
