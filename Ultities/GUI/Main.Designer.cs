@@ -74,6 +74,7 @@
             // 
             // compareWithCanMatrixToolStripMenuItem
             // 
+            this.compareWithCanMatrixToolStripMenuItem.Enabled = false;
             this.compareWithCanMatrixToolStripMenuItem.Image = global::Ultities.Properties.Resources.generate;
             this.compareWithCanMatrixToolStripMenuItem.Name = "compareWithCanMatrixToolStripMenuItem";
             this.compareWithCanMatrixToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
@@ -90,6 +91,7 @@
             // 
             // genScripForBSWShim
             // 
+            this.genScripForBSWShim.Enabled = false;
             this.genScripForBSWShim.Name = "genScripForBSWShim";
             this.genScripForBSWShim.Size = new System.Drawing.Size(214, 22);
             this.genScripForBSWShim.Text = "Generate scipt for BSWSim";

@@ -23,7 +23,7 @@ namespace Ultities.Helper
     {
         private DataTable _dt = new DataTable();
         private static IEnumerable<XElement> _record;
-
+        private int failedThreshold;
         public DataTable Dt
         {
             get
@@ -34,6 +34,19 @@ namespace Ultities.Helper
             set
             {
                 _dt = value;
+            }
+        }
+
+        public int FailedThreshold
+        {
+            get
+            {
+                return failedThreshold;
+            }
+
+            set
+            {
+                failedThreshold = value;
             }
         }
 
@@ -75,7 +88,7 @@ namespace Ultities.Helper
                     string frame_name = msg.MessageName;
                     string frame_id = msg.MessageID;
                     string frame_sendtype = msg.MessageSendType;
-                    string frame_cycletime = msg.MessageCycleTime;
+                    int frame_cycletime = Int32.Parse(msg.MessageCycleTime);
 
                     string fwtype = "ComScl";
                     string fwname = fwtype + "_" + frame_name + "_Timeout" + Environment.NewLine;
@@ -98,7 +111,12 @@ namespace Ultities.Helper
                         fwname = fwname + fwtype + "_" + frame_name + "_DataCorrupt";
                     }
 
-                    dt.Rows.Add(frame_name, frame_id, frame_sendtype, frame_cycletime, "", "", fwname, fwtype, "", "", "", "");
+                    int l_FailedThreshold = failedThreshold;
+                    int l_PassedThreshold = -1 * failedThreshold;
+                    int l_FailureLogging = failedThreshold * frame_cycletime;
+                    int l_FailureRecovery = failedThreshold * frame_cycletime;
+
+                    dt.Rows.Add(frame_name, frame_id, frame_sendtype, frame_cycletime, "", "", fwname, fwtype, l_FailedThreshold, l_PassedThreshold, l_FailureLogging, l_FailureRecovery);
 
                     #endregion
 
@@ -117,13 +135,12 @@ namespace Ultities.Helper
                                     break;
                                 }
                             }
-
                             string signal_name = sig.SignalName;
                             string signal_interface = sig.SignalInterface;
                             string sgn_failure_name = sig.SignalFailureWord;
                             string sgn_failure_type = "Scl";
 
-                            dt.Rows.Add("", "", "", "", signal_name, signal_interface, sgn_failure_name, sgn_failure_type, "", "", "", "");
+                            dt.Rows.Add("", "", "", "", signal_name, signal_interface, sgn_failure_name, sgn_failure_type, l_FailedThreshold, l_PassedThreshold, l_FailureLogging, l_FailureRecovery);
                         }
                     }
 

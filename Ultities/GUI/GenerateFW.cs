@@ -12,10 +12,13 @@ namespace Ultities.GUI
 
         static GenerateFW_Lists g_FWLists = new GenerateFW_Lists();
 
-        public GenerateFW()
+
+
+        public GenerateFW(int failedThreshold)
         {
             InitializeComponent();
             generateFWForm = this;
+            g_FWLists.FailedThreshold = failedThreshold;
         }
 
         public static bool IsGen93Checked()
@@ -53,6 +56,44 @@ namespace Ultities.GUI
         {
             DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
             //row.DefaultCellStyle.BackColor = Color.Blue;
+        }
+
+        private void tbFailedThreshold_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!(e.KeyChar >= '0' && e.KeyChar <= '9'))
+                e.Handled = true;
+        }
+
+        private void tbFailedThreshold_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            TextBox currenttb = (TextBox)sender;
+            int temp = Int32.Parse(currenttb.Text);
+
+            if (currenttb.Text == "")
+            {
+                MessageBox.Show(string.Format("Failed Threshold must be not null"));
+                e.Cancel = true;
+            }
+            else if (temp <= 0 || temp > 50)
+            {
+                MessageBox.Show(string.Format("Failed Threshold range is must be greater than 0 and less than 50"));
+                e.Cancel = true;
+            }
+
+            else
+            {
+                e.Cancel = false;
+            }
+        }
+
+        private void tbFailedThreshold_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

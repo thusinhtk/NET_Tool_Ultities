@@ -524,7 +524,7 @@ namespace Ultities.BLL
             }
             else
             {
-                return C_ERROR_MSG_CYCLETIME_NULL;
+                return C_ERROR_MSG_DLC_NULL;
             }
 
             #endregion

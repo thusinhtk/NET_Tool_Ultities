@@ -154,17 +154,65 @@ namespace Ultities
 
         private void btnCreateFWList_Click(object sender, EventArgs e)
         {
+
+
+            // Check loading data before
             if (BLL_Process.isLoadingDataBefore)
             {
+                //Check failed threshold textbox
+                if (tbFailedThreshold.Text == "")
+                {
+                    MessageBox.Show("Please fill failed threshold!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    tbFailedThreshold.Focus();
+                    return;
+                }
+
                 // log4net
                 _log.Info("-------------------------- Generate FW list--------------------------\n");
 
-                GenerateFW frmGenerateFW = new GenerateFW();
+                int failedThreshold = Int32.Parse(tbFailedThreshold.Text);
+                GenerateFW frmGenerateFW = new GenerateFW(failedThreshold);
                 frmGenerateFW.ShowDialog();
             }
             else
             {
                 MessageBox.Show("Please load data before!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbFailedThreshold_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!(e.KeyChar >= '0' && e.KeyChar <= '9'))
+                e.Handled = true;
+        }
+
+        private void tbFailedThreshold_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            TextBox currenttb = (TextBox)sender;
+
+            if (currenttb.Text == "")
+            {
+                MessageBox.Show(string.Format("Failed Threshold must be not null"));
+                e.Cancel = true;
+            }
+            else if (currenttb.Text != "")
+            {
+                int temp = Int32.Parse(currenttb.Text);
+                if (temp <= 0 || temp > 50)
+                {
+                    MessageBox.Show(string.Format("Failed Threshold range is must be greater than 0 and less than 50"));
+                    e.Cancel = true;
+                }
+            }
+
+            else
+            {
+                e.Cancel = false;
             }
         }
     }

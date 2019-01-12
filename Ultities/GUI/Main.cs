@@ -45,7 +45,7 @@ namespace Ultities
 
         private void compareWithCanMatrixToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GenerateFW frmGenerateFW = new GenerateFW();
+            GenerateFW frmGenerateFW = new GenerateFW(0);
             frmGenerateFW.ShowDialog();
         }
 

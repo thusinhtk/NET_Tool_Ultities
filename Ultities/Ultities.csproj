@@ -215,6 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="images_TZe_icon.ico" />
+    <None Include="Resources\excel_export_button.png" />
     <None Include="Resources\main1.jpg" />
     <None Include="Resources\maxresdefault.jpg" />
     <None Include="Resources\menu.jpg" />
