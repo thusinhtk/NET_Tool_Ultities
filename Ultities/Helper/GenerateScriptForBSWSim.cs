@@ -14,12 +14,10 @@ namespace Ultities.Helper
     {
         static BLL_Process prcs = new BLL_Process();
 
+
+
         static bool isLoadingDataBefore = false;
 
-        const int C_COLUMN_FAILEDTHRESHOLD      = 09;
-        const int C_COLUMN_PASSEDTHRESHOLD      = 10;
-        const int C_COLUMN_FAILURELOGGING_TIME  = 11;
-        const int C_COLUMN_FAILURERECOVERY_TIME = 12;
 
         private bool LoadData(string path)
         {

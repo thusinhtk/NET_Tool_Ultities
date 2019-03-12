@@ -91,7 +91,6 @@
             // 
             // genScripForBSWShim
             // 
-            this.genScripForBSWShim.Enabled = false;
             this.genScripForBSWShim.Name = "genScripForBSWShim";
             this.genScripForBSWShim.Size = new System.Drawing.Size(214, 22);
             this.genScripForBSWShim.Text = "Generate scipt for BSWSim";

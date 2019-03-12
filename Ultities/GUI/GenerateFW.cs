@@ -12,8 +12,6 @@ namespace Ultities.GUI
 
         static GenerateFW_Lists g_FWLists = new GenerateFW_Lists();
 
-
-
         public GenerateFW(int failedThreshold)
         {
             InitializeComponent();

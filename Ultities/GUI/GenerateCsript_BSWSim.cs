@@ -1,14 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-
+using System.Xml.Linq;
 using Ultities.BLL;
+using Ultities.Helper;
 
 namespace Ultities.GUI
 {
     public partial class GenerateCsript_BSWSim : Form
     {
-
+        static GenerateFW_Lists g_FWLists = new GenerateFW_Lists();
+        private XElement root_dncifTestScript = new XElement("DNCSIM_TestScript");
 
         public GenerateCsript_BSWSim()
         {
@@ -37,6 +39,11 @@ namespace Ultities.GUI
         }
 
         private void btnGenerateScript_Click(object sender, EventArgs e)
+        {
+            g_FWLists.CreateXMLData(/*ref root_dncifTestScript*/);
+        }
+
+        private void CreateXMLFile(string path)
         {
 
         }

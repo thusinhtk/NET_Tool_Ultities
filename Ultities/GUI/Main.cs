@@ -51,8 +51,8 @@ namespace Ultities
 
         private void genScripForBSWShim_Click(object sender, EventArgs e)
         {
-            GenerateCsript_BSWSim frmGenFWList = new GenerateCsript_BSWSim();
-            frmGenFWList.ShowDialog();
+            GenerateCsript_BSWSim frmGenBSWSim = new GenerateCsript_BSWSim();
+            frmGenBSWSim.ShowDialog();
         }
     }
 }
