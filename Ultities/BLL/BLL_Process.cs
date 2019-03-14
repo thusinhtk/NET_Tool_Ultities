@@ -18,6 +18,7 @@ namespace Ultities.BLL
     class BLL_Process
     {
         public static bool isLoadingDataBefore = false;
+        public static bool isGen93_ForGenerateBSWSim = false;
 
         private static Connection cn = new Connection();
 

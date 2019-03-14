@@ -94,11 +94,13 @@ namespace Ultities.Helper
             scriptParameterRemap.Add(new XElement("TargetParameter", msg.MessageName + "_" + "CanIf2PduR"));
             root_dncifTestScript.Add(scriptParameterRemap);
 
+            // Cycle time
             scriptParameterRemap = new XElement("ScriptParameterRemap");
             scriptParameterRemap.Add(new XElement("SourceParameter", "RxCycleTime"));
             scriptParameterRemap.Add(new XElement("TargetParameter", msg.MessageCycleTime));
             root_dncifTestScript.Add(scriptParameterRemap);
 
+            // Checksum signal
             string checksumSignal = "";
             if (IsChecksumFrame(msg))
             {
@@ -109,6 +111,7 @@ namespace Ultities.Helper
             scriptParameterRemap.Add(new XElement("TargetParameter", checksumSignal));
             root_dncifTestScript.Add(scriptParameterRemap);
 
+            // Alive counter signal
             string alivecounterSignal = "";
             if (IsRntCounterFrame(msg))
             {
@@ -119,31 +122,27 @@ namespace Ultities.Helper
             scriptParameterRemap.Add(new XElement("TargetParameter", alivecounterSignal));
             root_dncifTestScript.Add(scriptParameterRemap);
 
+            // Time out
             scriptParameterRemap = new XElement("ScriptParameterRemap");
             scriptParameterRemap.Add(new XElement("SourceParameter", "FW_Timeout"));
             scriptParameterRemap.Add(new XElement("TargetParameter", "ComScl_" + msg.MessageName + "_Timeout"));
             root_dncifTestScript.Add(scriptParameterRemap);
 
             scriptParameterRemap = new XElement("ScriptParameterRemap");
-            scriptParameterRemap.Add(new XElement("SourceParameter", "FW_DataCorrupt"));
-            scriptParameterRemap.Add(new XElement("TargetParameter", "ComScl_" + msg.MessageName + "_DataCorrupt"));
-            root_dncifTestScript.Add(scriptParameterRemap);
-
-            scriptParameterRemap = new XElement("ScriptParameterRemap");
             scriptParameterRemap.Add(new XElement("SourceParameter", "FW_Timeout_DebounceLevel"));
             scriptParameterRemap.Add(new XElement("TargetParameter", FailedThreshold));
             root_dncifTestScript.Add(scriptParameterRemap);
 
-            scriptParameterRemap = new XElement("ScriptParameterRemap");
-            scriptParameterRemap.Add(new XElement("SourceParameter", "FW_Timeout_DebounceLevel"));
-            scriptParameterRemap.Add(new XElement("TargetParameter", FailedThreshold));
-            root_dncifTestScript.Add(scriptParameterRemap);
+            if (isGen93_ForGenerateBSWSim)
+            {
+                GenXML_DLC_Rnt_CRS_ScriptParameterRemap_For93(root_dncifTestScript, msg);
+            }
+            else
+            {
+                GenXML_DataCrpt_ScriptParameterRemap_For9(root_dncifTestScript, msg);
+            }
 
-            scriptParameterRemap = new XElement("ScriptParameterRemap");
-            scriptParameterRemap.Add(new XElement("SourceParameter", "FW_DataCorrupt_DebounceLevel"));
-            scriptParameterRemap.Add(new XElement("TargetParameter", FailedThreshold));
-            root_dncifTestScript.Add(scriptParameterRemap);
-
+            // DLC
             scriptParameterRemap = new XElement("ScriptParameterRemap");
             scriptParameterRemap.Add(new XElement("SourceParameter", "ValidDLC"));
             scriptParameterRemap.Add(new XElement("TargetParameter", msg.MessageLength));
@@ -154,9 +153,59 @@ namespace Ultities.Helper
             scriptParameterRemap.Add(new XElement("TargetParameter", Int32.Parse(msg.MessageLength) - 2));
             root_dncifTestScript.Add(scriptParameterRemap);
 
+            // Debounce init
             scriptParameterRemap = new XElement("ScriptParameterRemap");
             scriptParameterRemap.Add(new XElement("SourceParameter", "FW_DebounceLevel_InitValue"));
             scriptParameterRemap.Add(new XElement("TargetParameter", FailedThreshold * (-1)));
+            root_dncifTestScript.Add(scriptParameterRemap);
+        }
+
+        private void GenXML_DLC_Rnt_CRS_ScriptParameterRemap_For93(XElement root_dncifTestScript, Messages msg)
+        {
+            // Alive counter
+            XElement scriptParameterRemap = new XElement("ScriptParameterRemap");
+            scriptParameterRemap.Add(new XElement("SourceParameter", "FW_Alivecounter"));
+            scriptParameterRemap.Add(new XElement("TargetParameter", "ComScl_" + msg.MessageName + "_AliveCounter"));
+            root_dncifTestScript.Add(scriptParameterRemap);
+
+            scriptParameterRemap = new XElement("ScriptParameterRemap");
+            scriptParameterRemap.Add(new XElement("SourceParameter", "FW_Alivecounter_DebounceLevel"));
+            scriptParameterRemap.Add(new XElement("TargetParameter", FailedThreshold));
+            root_dncifTestScript.Add(scriptParameterRemap);
+
+            // DataLengthCode
+            scriptParameterRemap = new XElement("ScriptParameterRemap");
+            scriptParameterRemap.Add(new XElement("SourceParameter", "FW_DataLengthCode"));
+            scriptParameterRemap.Add(new XElement("TargetParameter", "ComScl_" + msg.MessageName + "_DataLengthCode"));
+            root_dncifTestScript.Add(scriptParameterRemap);
+
+            scriptParameterRemap = new XElement("ScriptParameterRemap");
+            scriptParameterRemap.Add(new XElement("SourceParameter", "FW_DataLengthCode_DebounceLevel"));
+            scriptParameterRemap.Add(new XElement("TargetParameter", FailedThreshold));
+            root_dncifTestScript.Add(scriptParameterRemap);
+
+            // Checksum
+            scriptParameterRemap = new XElement("ScriptParameterRemap");
+            scriptParameterRemap.Add(new XElement("SourceParameter", "FW_Checksum"));
+            scriptParameterRemap.Add(new XElement("TargetParameter", "ComScl_" + msg.MessageName + "_Checksum"));
+            root_dncifTestScript.Add(scriptParameterRemap);
+
+            scriptParameterRemap = new XElement("ScriptParameterRemap");
+            scriptParameterRemap.Add(new XElement("SourceParameter", "FW_Checksum_DebounceLevel"));
+            scriptParameterRemap.Add(new XElement("TargetParameter", FailedThreshold));
+            root_dncifTestScript.Add(scriptParameterRemap);
+        }
+
+        private void GenXML_DataCrpt_ScriptParameterRemap_For9(XElement root_dncifTestScript, Messages msg)
+        {
+            XElement scriptParameterRemap = new XElement("ScriptParameterRemap");
+            scriptParameterRemap.Add(new XElement("SourceParameter", "FW_DataCorrupt"));
+            scriptParameterRemap.Add(new XElement("TargetParameter", "ComScl_" + msg.MessageName + "_DataCorrupt"));
+            root_dncifTestScript.Add(scriptParameterRemap);
+
+            scriptParameterRemap = new XElement("ScriptParameterRemap");
+            scriptParameterRemap.Add(new XElement("SourceParameter", "FW_DataCorrupt_DebounceLevel"));
+            scriptParameterRemap.Add(new XElement("TargetParameter", FailedThreshold));
             root_dncifTestScript.Add(scriptParameterRemap);
         }
 
@@ -294,12 +343,14 @@ namespace Ultities.Helper
             scriptContent.Add(new XElement("Description"));
             root_dncifTestScript.Add(scriptContent);
 
+            #region Check var code
+
             scriptContent = new XElement("ScriptContent");
             scriptContent.Add(new XElement("Command", "GetVariable"));
             scriptContent.Add(new XElement("Disabled"));
             scriptContent.Add(new XElement("Parameters", "NMSG_VarRBData_ST.RBVarCode_UB"));
             scriptContent.Add(new XElement("TestResult", "1"));
-            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("ExpectResult", "1"));
             scriptContent.Add(new XElement("Tolerance"));
             scriptContent.Add(new XElement("VerificationResult"));
             scriptContent.Add(new XElement("VerificationMethod"));
@@ -318,6 +369,8 @@ namespace Ultities.Helper
             scriptContent.Add(new XElement("Description"));
             root_dncifTestScript.Add(scriptContent);
 
+            #endregion
+
             scriptContent = new XElement("ScriptContent");
             scriptContent.Add(new XElement("Command", "GetCycleTime"));
             scriptContent.Add(new XElement("Disabled"));
@@ -330,281 +383,16 @@ namespace Ultities.Helper
             scriptContent.Add(new XElement("Description"));
             root_dncifTestScript.Add(scriptContent);
 
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "Set Fault DLC to test DataCorrupt"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
+            if (isGen93_ForGenerateBSWSim)
+            {
+                GenXML_DLC_CRC_Rnt_For93(root_dncifTestScript, msg);
+            }
+            else
+            {
+                GenXML_DLC_CRC_Rnt_For9(root_dncifTestScript, msg);
+            }
 
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "CANFrameSetDLC"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,InvalidDLC"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "RunProcesses"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "RxCycleTime"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "CANFrameGetDLC"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame"));
-            scriptContent.Add(new XElement("TestResult",(int.Parse(msg.MessageLength)-2)));
-            scriptContent.Add(new XElement("ExpectResult", "InvalidDLC"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult", "PASS"));
-            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "RunProcesses"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "500"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
-            scriptContent.Add(new XElement("TestResult", "10"));
-            scriptContent.Add(new XElement("ExpectResult", "FW_DataCorrupt_DebounceLevel"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult", "PASS"));
-            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "CANFrameSetDLC"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,8"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "RunProcesses"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "500"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
-            scriptContent.Add(new XElement("TestResult", "-10"));
-            scriptContent.Add(new XElement("ExpectResult", "FW_DebounceLevel_InitValue"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult", "PASS"));
-            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "Set Checksum Disabled (check how this is disabled)"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "CanSignalSetDisable"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Checksum"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "RunProcesses"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "200"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
-            scriptContent.Add(new XElement("TestResult", "10"));
-            scriptContent.Add(new XElement("ExpectResult", "FW_DataCorrupt_DebounceLevel"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult", "PASS"));
-            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "CanSignalSetEnable"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Checksum"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "RunProcesses"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "200"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
-            scriptContent.Add(new XElement("TestResult", "-10"));
-            scriptContent.Add(new XElement("ExpectResult", "FW_DebounceLevel_InitValue"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult", "PASS"));
-            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "Set Alivecounter Disabled"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "CanSignalSetDisable"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Alivecounter"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "RunProcesses"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "200"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
-            scriptContent.Add(new XElement("TestResult", "10"));
-            scriptContent.Add(new XElement("ExpectResult", "FW_DataCorrupt_DebounceLevel"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult", "PASS"));
-            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "CanSignalSetEnable"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Alivecounter"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "RunProcesses"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "200"));
-            scriptContent.Add(new XElement("TestResult"));
-            scriptContent.Add(new XElement("ExpectResult"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult"));
-            scriptContent.Add(new XElement("VerificationMethod"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
-
-            scriptContent = new XElement("ScriptContent");
-            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
-            scriptContent.Add(new XElement("Disabled"));
-            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
-            scriptContent.Add(new XElement("TestResult", "-10"));
-            scriptContent.Add(new XElement("ExpectResult", "FW_DebounceLevel_InitValue"));
-            scriptContent.Add(new XElement("Tolerance"));
-            scriptContent.Add(new XElement("VerificationResult", "PASS"));
-            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
-            scriptContent.Add(new XElement("Description"));
-            root_dncifTestScript.Add(scriptContent);
+            #region XML for timeout
 
             scriptContent = new XElement("ScriptContent");
             scriptContent.Add(new XElement("Command"));
@@ -690,6 +478,8 @@ namespace Ultities.Helper
             scriptContent.Add(new XElement("Description"));
             root_dncifTestScript.Add(scriptContent);
 
+            #endregion
+
             scriptContent = new XElement("ScriptContent");
             scriptContent.Add(new XElement("Command"));
             scriptContent.Add(new XElement("Disabled"));
@@ -714,6 +504,625 @@ namespace Ultities.Helper
             scriptContent.Add(new XElement("Description"));
             root_dncifTestScript.Add(scriptContent);
         }
+
+        #region Gen XML Rnt, checksum, Data corrupt for 9
+
+        private void GenXML_DLC_CRC_Rnt_For9(XElement root_dncifTestScript, Messages msg)
+        {
+            GenXML_InvalidDLC_9(root_dncifTestScript, msg);
+            GenXML_Empty((root_dncifTestScript));
+
+            GenXML_Checksum_9(root_dncifTestScript, msg);
+            GenXML_Empty((root_dncifTestScript));
+
+            GenXML_AliveCounter_9(root_dncifTestScript, msg);
+            GenXML_Empty((root_dncifTestScript));
+        }
+
+        private void GenXML_AliveCounter_9(XElement root_dncifTestScript, Messages msg)
+        {
+            XElement scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "Set Alivecounter Disabled"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CanSignalSetDisable"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Alivecounter"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
+            scriptContent.Add(new XElement("TestResult", "10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_DataCorrupt_DebounceLevel"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CanSignalSetEnable"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Alivecounter"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
+            scriptContent.Add(new XElement("TestResult", "-10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_DebounceLevel_InitValue"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+        }
+
+        private void GenXML_Checksum_9(XElement root_dncifTestScript, Messages msg)
+        {
+            XElement scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "Set Checksum Disabled (check how this is disabled)"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CanSignalSetDisable"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Checksum"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
+            scriptContent.Add(new XElement("TestResult", "10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_DataCorrupt_DebounceLevel"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CanSignalSetEnable"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Checksum"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
+            scriptContent.Add(new XElement("TestResult", "-10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_DebounceLevel_InitValue"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+        }
+
+        private void GenXML_InvalidDLC_9(XElement root_dncifTestScript, Messages msg)
+        {
+            XElement scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "Set Fault DLC to test DataCorrupt"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CANFrameSetDLC"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,InvalidDLC"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "RxCycleTime"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CANFrameGetDLC"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame"));
+            scriptContent.Add(new XElement("TestResult", (int.Parse(msg.MessageLength) - 2)));
+            scriptContent.Add(new XElement("ExpectResult", "InvalidDLC"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
+            scriptContent.Add(new XElement("TestResult", "10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_DataCorrupt_DebounceLevel"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CANFrameSetDLC"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,ValidDLC"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_DataCorrupt"));
+            scriptContent.Add(new XElement("TestResult", "-10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_DebounceLevel_InitValue"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+        }
+
+        #endregion
+
+        private void GenXML_Empty(XElement root_dncifTestScript)
+        {
+            XElement scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+        }
+
+        #region Gen XML Rnt, checksum, Data length code for 9.3
+        private void GenXML_DLC_CRC_Rnt_For93(XElement root_dncifTestScript, Messages msg)
+        {
+            GenXML_DataLengthCode_93(root_dncifTestScript, msg);
+            GenXML_Empty((root_dncifTestScript));
+
+            GenXML_Checksum_93(root_dncifTestScript, msg);
+            GenXML_Empty((root_dncifTestScript));
+
+            GenXML_AliveCounter_93(root_dncifTestScript, msg);
+            GenXML_Empty((root_dncifTestScript));
+        }
+
+        private void GenXML_AliveCounter_93(XElement root_dncifTestScript, Messages msg)
+        {
+
+            XElement scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "Set Alivecounter Disabled"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CanSignalSetDisable"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Alivecounter"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_Alivecounter"));
+            scriptContent.Add(new XElement("TestResult", "10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_Alivecounter_DebounceLevel"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CanSignalSetEnable"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Alivecounter"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_Alivecounter"));
+            scriptContent.Add(new XElement("TestResult", "-10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_DebounceLevel_InitValue"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+        }
+
+        private void GenXML_Checksum_93(XElement root_dncifTestScript, Messages msg)
+        {
+            XElement scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "Set Checksum Disabled (check how this is disabled)"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CanSignalSetDisable"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Checksum"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_Checksum"));
+            scriptContent.Add(new XElement("TestResult", "10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_Checksum_DebounceLevel"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CanSignalSetEnable"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,Checksum"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_Checksum"));
+            scriptContent.Add(new XElement("TestResult", "-10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_DebounceLevel_InitValue"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+        }
+
+        private void GenXML_DataLengthCode_93(XElement root_dncifTestScript, Messages msg)
+        {
+            XElement scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "Set Fault DLC to test DataLengthCode"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CANFrameSetDLC"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,InvalidDLC"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "RxCycleTime"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CANFrameGetDLC"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame"));
+            scriptContent.Add(new XElement("TestResult", (int.Parse(msg.MessageLength) - 2)));
+            scriptContent.Add(new XElement("ExpectResult", "InvalidDLC"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_DataLengthCode"));
+            scriptContent.Add(new XElement("TestResult", "10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_DataLengthCode_DebounceLevel"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "CANFrameSetDLC"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "ControllerNumber,RxFrame,ValidDLC"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "RunProcesses"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "500"));
+            scriptContent.Add(new XElement("TestResult"));
+            scriptContent.Add(new XElement("ExpectResult"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult"));
+            scriptContent.Add(new XElement("VerificationMethod"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+
+            scriptContent = new XElement("ScriptContent");
+            scriptContent.Add(new XElement("Command", "DSWGetMIDStatus"));
+            scriptContent.Add(new XElement("Disabled"));
+            scriptContent.Add(new XElement("Parameters", "FW_DataLengthCode"));
+            scriptContent.Add(new XElement("TestResult", "-10"));
+            scriptContent.Add(new XElement("ExpectResult", "FW_DebounceLevel_InitValue"));
+            scriptContent.Add(new XElement("Tolerance"));
+            scriptContent.Add(new XElement("VerificationResult", "PASS"));
+            scriptContent.Add(new XElement("VerificationMethod", "CheckValue"));
+            scriptContent.Add(new XElement("Description"));
+            root_dncifTestScript.Add(scriptContent);
+        }
+
+        #endregion
 
         private void CreateScriptTitle(XElement root_dncifTestScript, Messages msg)
         {
@@ -948,6 +1357,10 @@ namespace Ultities.Helper
         public bool Export2Excel()
         {
             bool result = false;
+
+            // Set value
+            isGen93_ForGenerateBSWSim = IsGen93Checked();
+
             CreateDataTable();
 
             string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
